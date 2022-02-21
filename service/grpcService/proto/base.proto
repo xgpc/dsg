@@ -1,0 +1,117 @@
+syntax = "proto3";
+
+package proto;
+
+import "google/protobuf/empty.proto";
+
+option go_package = "./;proto";
+
+service UserService {
+  rpc GetByID (UserID) returns (User) {}
+  rpc GetIDByMobile (mobile) returns (UserID) {}
+  rpc GetInfoByToken (token) returns (Info) {}
+
+  rpc ListByIDs(stream UserID) returns (stream UserList){};
+
+  //  登录
+  rpc Login (login) returns (token) {}
+  //  刷新token
+  rpc ExpireToken (token) returns (google.protobuf.Empty) {}
+  // 修改手机号
+  rpc UpdateMobile (User) returns (google.protobuf.Empty) {}
+}
+
+service MsgService {
+  //  发送验证码
+  rpc SendMsgCode (mobile) returns (MsgCodeBack) {}
+  //  校验验证码
+  rpc CheckMsgCode (MsgCode) returns (BoolF) {}
+}
+
+message Info {
+  uint32 userID = 1;
+  string openID = 2;
+}
+
+message UserID {
+  uint32 id = 1;
+}
+
+message MsgCodeBack {
+  string msg = 1;
+  string code = 2;
+}
+
+message msg {
+  string msg = 1;
+}
+
+message token {
+  string token = 1;
+}
+
+message mobile {
+  string mobile = 1;
+}
+
+message MsgCode {
+  string mobile = 1;
+  string code = 2;
+}
+
+message BoolF {
+  bool f = 1;
+}
+
+message login {
+  uint32 LoginType = 1;
+  string device = 2;
+  string mobile = 3;
+  string code = 4;
+}
+
+message User {
+  uint32 id = 1;
+  string mobile = 2;
+}
+
+message UserList{
+  User u = 1;
+}
+
+//微信公众号、小程序
+service WechatService {
+  //  登录
+  rpc Login(WechatLogin) returns (token) {}
+  // 获取access_token
+  rpc GetAccessToken(AppID) returns (token) {}
+  //  微信绑定用户信息
+  rpc BindUser(WechatMobile) returns (google.protobuf.Empty) {}
+}
+
+message OpenID {
+  string id = 1;
+}
+
+message Code {
+  string code = 1;
+  string   appID = 2;
+}
+
+message AppID {
+  string appID = 1;
+}
+
+message WechatLogin {
+  string appID = 1;
+  string code = 2;
+  //  系统标识
+  uint32 sysCode = 3;
+  uint32 loginType = 4;
+}
+
+message WechatMobile {
+  string mobile = 1;
+  string openID = 2;
+  uint32 sysCode = 3;
+}
