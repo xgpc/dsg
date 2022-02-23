@@ -72,6 +72,7 @@ func (this *Base) Token() (token string) {
 	return
 }
 
+// Key 从header中获取前端公钥
 func (this *Base) Key() (rsa []byte) {
 	s := this.ctx.GetHeader("Key")
 	if s == "" {
@@ -79,7 +80,7 @@ func (this *Base) Key() (rsa []byte) {
 	}
 	rsa, err := base64.StdEncoding.DecodeString(s)
 	if err != nil {
-		panic(exce.CodeSysError)
+		panic(exce.CodeSysBusy)
 	}
 	return
 }
@@ -139,11 +140,11 @@ func (this *Base) Redis() *redis.Client {
 func (this *Base) CryptSend(data []byte) {
 	AesKey, err := cryptService.GenKeyByte(16)
 	if err != nil {
-		exce.ThrowSys(exce.CodeSysError, err.Error())
+		exce.ThrowSys(exce.CodeSysBusy, err.Error())
 	}
 	iv, err := cryptService.GenKeyByte(16)
 	if err != nil {
-		exce.ThrowSys(exce.CodeSysError, err.Error())
+		exce.ThrowSys(exce.CodeSysBusy, err.Error())
 	}
 	encrypted, err := cryptService.AesEncrypt(data, AesKey, iv)
 	if err != nil {
@@ -172,33 +173,13 @@ func (this *Base) CryptReceive() []byte {
 	}
 	this.Init(&param)
 
-	//toStringIV := base64.StdEncoding.EncodeToString(param.IV)
-	//fmt.Println("IV:::", toStringIV)
-	//toStringOriginKey := base64.StdEncoding.EncodeToString(param.OriginKey)
-	//fmt.Println("toStringOriginKey:::", toStringOriginKey)
-
-	//toStringKey := base64.StdEncoding.EncodeToString(param.Key)
-	//fmt.Println("toStringKey:::", toStringKey)
-
-	//fmt.Println("--------------------Data--------------")
-	//toStringData := base64.StdEncoding.EncodeToString(param.Data)
-	//fmt.Println("toStringData:::", toStringData)
-	//fmt.Println("Data:::", string(param.Data))
-
 	//------>
 	// 使用RSA私钥解出AES秘钥
 	decryptAESKey := cryptService.RSADecrypt(param.Key, cryptService.RSAKey.Private)
-	//fmt.Println("decryptAESKey:::", string(decryptAESKey))
-	//使用AES解出数据
-	//decodeString, err2 := base64.StdEncoding.DecodeString(string(param.Data))
-	//if err2 != nil {
-	//	fmt.Println("err2::", err2)
-	//}
 	origin, err := cryptService.AesDecrypt(param.Data, decryptAESKey, param.IV)
 	if err != nil {
 		fmt.Println(err)
 	}
-	//fmt.Println("origin:::", string(origin))
 	//<----------
 	return origin
 }

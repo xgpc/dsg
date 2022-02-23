@@ -3,13 +3,13 @@ package models
 import (
 	"github.com/enjoy322/ormtool"
 	"github.com/enjoy322/ormtool/base"
-	"github.com/xgpc/dsg"
+	"github.com/xgpc/dsg/frame"
 )
 
 // GenModel 生成数据库表对应的结构体
 func GenModel() {
 	//从config.yaml获取配置
-	m := dsg.Config.Mysql
+	m := frame.Config.Mysql
 	ormtool.GenerateMySQL(
 		base.MysqlConfig{
 			User:     m.User,

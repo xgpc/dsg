@@ -6,7 +6,7 @@ import (
 	"github.com/xgpc/dsg/service/cryptService"
 )
 
-// GetRSAPublicKey 获取公钥
+// GetRSAPublicKey 前端获取公钥
 func GetRSAPublicKey(ctx iris.Context) {
 	this := frame.NewBase(ctx)
 	info := cryptService.RSAKey.Public

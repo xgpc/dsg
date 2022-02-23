@@ -42,22 +42,12 @@ func RSAEncrypt(plainText []byte, key []byte) []byte {
 	if err != nil {
 		panic(err)
 	}
-	//返回密文
-	//toString := base64.StdEncoding.EncodeToString(cipherText)
 	return cipherText
 }
 
 // RSADecrypt RSA解密
 // cipherText 需要解密的byte数据
 func RSADecrypt(cipherText []byte, key []byte) []byte {
-	//fmt.Println("cipherText1::",unsafe.Sizeof(cipherText))
-	//toString := base64.StdEncoding.EncodeToString(cipherText)
-	//fmt.Println("cipherText2::",unsafe.Sizeof(toString))
-
-	//decodeString, err2 := base64.StdEncoding.DecodeString(cipherText)
-	//if err2 != nil {
-	//	fmt.Println(err2)
-	//}
 	//pem解码
 	decode, _ := pem.Decode(key)
 	//X509解码

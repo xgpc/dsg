@@ -293,11 +293,11 @@ func (t *TimerData) myHandler() {
 				switch v := e.(type) {
 				case exce.SysException:
 				case string:
-					exce.ThrowSys(exce.CodeSysError, "定时器处理错误："+v)
+					exce.ThrowSys(exce.CodeSysBusy, "定时器处理错误："+v)
 				case error:
-					exce.ThrowSys(exce.CodeSysError, "定时器处理错误："+e.(error).Error())
+					exce.ThrowSys(exce.CodeSysBusy, "定时器处理错误："+e.(error).Error())
 				default:
-					exce.ThrowSys(exce.CodeSysError, "")
+					exce.ThrowSys(exce.CodeSysBusy, "")
 				}
 			}
 		}()

@@ -19,8 +19,4 @@ func Load(app *iris.Application) {
 func LoadRouter(app *iris.Application) {
 	api := app.Party("/api")
 	Sys(api)
-	MsgCode(api)
-	User(api)
-	Json(api)
-	Wechat(api)
 }

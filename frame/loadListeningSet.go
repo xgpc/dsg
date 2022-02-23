@@ -32,7 +32,7 @@ func loadSet404(app *iris.Application) {
 }
 
 func onApp500(ctx iris.Context) {
-	panic(exce.CodeSysError)
+	panic(exce.CodeSysBusy)
 }
 
 func onApp404(ctx iris.Context) {

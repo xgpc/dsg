@@ -1,14 +1,13 @@
 package models
 
 import (
-	"github.com/xgpc/dsg"
 	"github.com/xgpc/dsg/frame"
 	"log"
+	"os"
 )
 
 const (
-	checkSQL = `select count(*) from " +
-		"information_schema.tables where table_name=? and TABLE_SCHEMA=?;`
+	checkSQL  = `select count(*) from information_schema.tables where table_name=? and TABLE_SCHEMA=?;`
 	createSQL = `create table user
 (
     id     int unsigned auto_increment comment '主键'
@@ -25,7 +24,7 @@ const (
 
 func InitUser() {
 	db := frame.DB
-	dbName := dsg.Config.Mysql.Database
+	dbName := frame.Config.Mysql.Database
 	var i int64
 	err := db.Raw(checkSQL, tableName, dbName).Scan(&i).Error
 	if err != nil {
@@ -35,5 +34,8 @@ func InitUser() {
 	if i < 1 {
 		frame.DB.Exec(createSQL)
 		GenModel()
+		os.Mkdir("models/cmd", 0777)
+		//	todo os.OpenFile()
+
 	}
 }

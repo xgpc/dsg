@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"github.com/go-redis/redis/v8"
-	"github.com/xgpc/dsg"
 )
 
 var rDB *redis.Client
@@ -13,10 +12,10 @@ func RedisDefault() *redis.Client {
 	return rDB
 }
 func loadRedis() {
-	rDB = redisInit(dsg.Config.Redis)
+	rDB = redisInit(Config.Redis)
 }
 
-func redisInit(conf dsg.Redis) *redis.Client {
+func redisInit(conf Redis) *redis.Client {
 	var addr bytes.Buffer
 
 	addr.WriteString(conf.Host)

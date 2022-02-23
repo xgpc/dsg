@@ -2,10 +2,11 @@ package frame
 
 import (
 	"bytes"
-	"github.com/xgpc/dsg"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 	"log"
+	"os"
 	"time"
 )
 
@@ -16,10 +17,10 @@ func MySqlDefault() *gorm.DB {
 }
 
 func loadMysql() {
-	DB = mysqlInit(dsg.Config.Mysql)
+	DB = mysqlInit(Config.Mysql)
 }
 
-func mysqlInit(conf dsg.Mysql) *gorm.DB {
+func mysqlInit(conf Mysql) *gorm.DB {
 	//连接
 	mysqlConfig := conf
 	var connStr bytes.Buffer
@@ -34,7 +35,20 @@ func mysqlInit(conf dsg.Mysql) *gorm.DB {
 	connStr.WriteString(mysqlConfig.Database)
 	connStr.WriteString("?charset=utf8mb4&collation=utf8mb4_unicode_ci&parseTime=true&loc=Local")
 
-	db, err := gorm.Open(mysql.Open(connStr.String()), &gorm.Config{})
+	slowLogger := logger.New(
+		//将标准输出作为Writer
+		log.New(os.Stdout, "\r\n", log.LstdFlags),
+		logger.Config{
+			//设定慢查询时间阈值为1ms
+			SlowThreshold: 500 * 1000 * time.Microsecond,
+			//设置日志级别，只有Warn和Info级别会输出慢查询日志
+			LogLevel: logger.Warn,
+		},
+	)
+
+	db, err := gorm.Open(mysql.Open(connStr.String()), &gorm.Config{
+		Logger: slowLogger,
+	})
 	if db == nil {
 		panic("[error] 连接失败")
 	}

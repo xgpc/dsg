@@ -1,6 +1,7 @@
 package service
 
 import (
+	"github.com/xgpc/dsg/frame"
 	"github.com/xgpc/dsg/models"
 	"github.com/xgpc/dsg/service/cryptService"
 	"github.com/xgpc/dsg/service/grpcService/proto"
@@ -10,13 +11,10 @@ import (
 )
 
 func LoadService() {
-
-	// TODO: 定时任务 需要式样
-	schedule.Start()
-	schedule.StartSchedules()
-
-	// 启动缓存
-	CacheStart()
+	if frame.Config.SysConfig.StartSchedule {
+		schedule.Start()
+		schedule.StartSchedules()
+	}
 
 	// 参数验证器配置
 	validatorService.GetTranslations()
@@ -33,4 +31,6 @@ func LoadService() {
 	// grpc连接初始化
 	proto.GRPCConnect()
 
+	// 启动缓存
+	CacheStart()
 }
