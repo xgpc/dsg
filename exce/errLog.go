@@ -2,46 +2,12 @@ package exce
 
 import (
 	"fmt"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 	"log"
 	"os"
-	"runtime"
 	"time"
 )
 
-func ErrDeal(err error, args ...interface{}) error {
-	num := len(args)
-	switch num {
-	case 0:
-		defer func() {
-			if err := recover(); err != nil {
-				log.Println("日志写入失败：" + err.(error).Error())
-			}
-		}()
-		pc, _, line, ok := runtime.Caller(1)
-		f := runtime.FuncForPC(pc)
-		if !ok {
-
-		}
-		if err != nil {
-			t := time.Now().Format("2006-01-02 15:4:05")
-			errMsg := fmt.Sprintf("%s at %s:%d Cause by: %s\n", t, f.Name(), line, err.Error())
-			write(errMsg)
-		}
-		return status.Error(CodeSysBusy, "")
-	case 1:
-		code := args[0]
-		return status.Error(codes.Code(code.(int)), "")
-	case 2:
-		code := args[0]
-		msg := args[1]
-		return status.Error(codes.Code(code.(int)), msg.(string))
-	}
-	return nil
-}
-
-func write(data string) {
+func Write(data string) {
 	day := time.Now().Format("2006-01-02")
 	dir := "log"
 	path := dir + "/" + day + ".log"
@@ -52,7 +18,11 @@ func write(data string) {
 	if err != nil {
 		log.Println(err)
 	}
-	_, err = f.WriteString(data)
+
+	//
+	t := time.Now().Format("2006-01-02 15:4:05")
+
+	_, err = f.WriteString(t + " " + data)
 	if err != nil {
 		log.Println(err)
 	}

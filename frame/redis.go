@@ -2,7 +2,6 @@ package frame
 
 import (
 	"context"
-	"github.com/xgpc/dsg/exce"
 	"time"
 
 	"github.com/go-redis/redis/v8"
@@ -37,7 +36,7 @@ func RedisConn() *redisConn {
 
 func (r *redisConn) ErrRedisGet(key string) (string, bool) {
 	if r.Conn == nil {
-		exce.LogError("redis get -> redis nil", key)
+		LogError("redis get -> redis nil", key)
 		return "", false
 	}
 
@@ -46,7 +45,7 @@ func (r *redisConn) ErrRedisGet(key string) (string, bool) {
 		return "", true
 	}
 	if err != nil {
-		exce.LogError("redis get -> error:"+err.Error(), key)
+		LogError("redis get -> error:"+err.Error(), key)
 		return "", false
 	}
 
@@ -67,13 +66,13 @@ func (conn *redisConn) RedisGet(key string) string {
 
 func (conn *redisConn) ErrRedisSet(key, value string, sec int) bool {
 	if conn == nil {
-		exce.LogError("redis set -> redis nil", key+" => "+value)
+		LogError("redis set -> redis nil", key+" => "+value)
 		return false
 	}
 
 	err := conn.Conn.Set(ctx, key, value, time.Duration(sec)*time.Second).Err()
 	if err != nil {
-		exce.LogError("redis set -> error:"+err.Error(), key+" => "+value)
+		LogError("redis set -> error:"+err.Error(), key+" => "+value)
 		return false
 	}
 	return true
@@ -89,13 +88,13 @@ func (conn *redisConn) RedisSet(key, value string, sec int) {
 
 func (conn *redisConn) ErrRedisDel(key string) bool {
 	if conn.Conn == nil {
-		exce.LogError("redis del -> redis nil", key)
+		LogError("redis del -> redis nil", key)
 		return false
 	}
 
 	err := conn.Conn.Del(ctx, key).Err()
 	if err != nil {
-		exce.LogError("redis del -> error:"+err.Error(), key)
+		LogError("redis del -> error:"+err.Error(), key)
 		return false
 	}
 	return true
@@ -111,7 +110,7 @@ func (conn *redisConn) RedisDel(key string) {
 
 func (conn *redisConn) ErrRedisScan(cursor uint64, match string, count int64) ([]string, uint64, bool) {
 	if conn == nil {
-		exce.LogError("redis scan -> redis nil", match)
+		LogError("redis scan -> redis nil", match)
 		return nil, 0, false
 	}
 
@@ -121,7 +120,7 @@ func (conn *redisConn) ErrRedisScan(cursor uint64, match string, count int64) ([
 	}
 
 	if err != nil {
-		exce.LogError("redis scan -> error:"+err.Error(), match)
+		LogError("redis scan -> error:"+err.Error(), match)
 		return nil, 0, false
 	}
 
@@ -140,7 +139,7 @@ func (conn *redisConn) RedisScan(cursor uint64, match string, count int64) ([]st
 
 func (conn *redisConn) ErrRedisHScan(key string, cursor uint64, match string, count int64) ([]string, uint64, bool) {
 	if conn == nil {
-		exce.LogError("redis hscan -> redis nil", match)
+		LogError("redis hscan -> redis nil", match)
 		return nil, 0, false
 	}
 
@@ -150,7 +149,7 @@ func (conn *redisConn) ErrRedisHScan(key string, cursor uint64, match string, co
 	}
 
 	if err != nil {
-		exce.LogError("redis hscan -> error:"+err.Error(), match)
+		LogError("redis hscan -> error:"+err.Error(), match)
 		return nil, 0, false
 	}
 
@@ -169,7 +168,7 @@ func (conn *redisConn) RedisHScan(key string, cursor uint64, match string, count
 
 func (conn *redisConn) ErrRedisHGet(key, field string) (string, bool) {
 	if conn == nil {
-		exce.LogError("redis hget -> redis nil", key+" => "+field)
+		LogError("redis hget -> redis nil", key+" => "+field)
 		return "", false
 	}
 
@@ -178,7 +177,7 @@ func (conn *redisConn) ErrRedisHGet(key, field string) (string, bool) {
 		return "", true
 	}
 	if err != nil {
-		exce.LogError("redis hget -> error:"+err.Error(), key+" => "+field)
+		LogError("redis hget -> error:"+err.Error(), key+" => "+field)
 		return "", false
 	}
 
@@ -197,12 +196,12 @@ func (conn *redisConn) RedisHGet(key, field string) string {
 
 func (conn *redisConn) ErrRedisHDel(key, field string) bool {
 	if conn == nil {
-		exce.LogError("redis hdel -> redis nil", key+" => "+field)
+		LogError("redis hdel -> redis nil", key+" => "+field)
 		return false
 	}
 	err := conn.Conn.HDel(ctx, key, field).Err()
 	if err != nil {
-		exce.LogError("redis hdel -> error:"+err.Error(), key+" => "+field)
+		LogError("redis hdel -> error:"+err.Error(), key+" => "+field)
 		return false
 	}
 
@@ -219,13 +218,13 @@ func (conn *redisConn) RedisHDel(key, field string) {
 
 func (conn *redisConn) ErrRedisHSet(key, field, value string) bool {
 	if conn == nil {
-		exce.LogError("redis hset -> redis nil", key+" => "+field)
+		LogError("redis hset -> redis nil", key+" => "+field)
 		return false
 	}
 
 	err := conn.Conn.HSet(ctx, key, field, value).Err()
 	if err != nil {
-		exce.LogError("redis hset -> error:"+err.Error(), key+" => "+field)
+		LogError("redis hset -> error:"+err.Error(), key+" => "+field)
 		return false
 	}
 	return true
@@ -241,13 +240,13 @@ func (conn *redisConn) RedisHSet(key, field, value string) {
 
 func (conn *redisConn) ErrRedisPush(key, value string) bool {
 	if conn == nil {
-		exce.LogError("redis rpush -> redis nil", key)
+		LogError("redis rpush -> redis nil", key)
 		return false
 	}
 
 	err := conn.Conn.RPush(ctx, key, value).Err()
 	if err != nil {
-		exce.LogError("redis rpush -> error:"+err.Error(), key+" => "+value)
+		LogError("redis rpush -> error:"+err.Error(), key+" => "+value)
 		return false
 	}
 	return true
@@ -264,7 +263,7 @@ func (conn *redisConn) RedisPush(key, value string) {
 
 func (conn *redisConn) ErrRedisPop(key string) (string, bool) {
 	if conn == nil {
-		exce.LogError("redis lpop -> redis nil", key)
+		LogError("redis lpop -> redis nil", key)
 		return "", false
 	}
 
@@ -273,7 +272,7 @@ func (conn *redisConn) ErrRedisPop(key string) (string, bool) {
 		return "", true
 	}
 	if err != nil {
-		exce.LogError("redis lpop -> error:"+err.Error(), key)
+		LogError("redis lpop -> error:"+err.Error(), key)
 		return "", false
 	}
 	return string(bs), true
@@ -292,7 +291,7 @@ func (conn *redisConn) RedisPop(key string) string {
 
 func (conn *redisConn) ErrRedisLRange(key string, start, end int64) ([]string, bool) {
 	if conn == nil {
-		exce.LogError("redis lrange -> redis nil", key)
+		LogError("redis lrange -> redis nil", key)
 		return []string{}, false
 	}
 
@@ -301,7 +300,7 @@ func (conn *redisConn) ErrRedisLRange(key string, start, end int64) ([]string, b
 		return []string{}, true
 	}
 	if err != nil {
-		exce.LogError("redis lrange -> error:"+err.Error(), key)
+		LogError("redis lrange -> error:"+err.Error(), key)
 		return []string{}, false
 	}
 	return datum, true
@@ -319,13 +318,13 @@ func (conn *redisConn) RedisLRange(key string, start, end int64) []string {
 
 func (conn *redisConn) ErrRedisExpire(key string, lifetime int) bool {
 	if conn == nil {
-		exce.LogError("redis expire -> redis nil", key)
+		LogError("redis expire -> redis nil", key)
 		return false
 	}
 
 	err := conn.Conn.Expire(ctx, key, time.Duration(lifetime)*time.Second).Err()
 	if err != nil {
-		exce.LogError("redis expire -> error:"+err.Error(), key)
+		LogError("redis expire -> error:"+err.Error(), key)
 		return false
 	}
 	return true
@@ -341,13 +340,13 @@ func (conn *redisConn) RedisExpire(key string, lifetime int) {
 
 func (conn *redisConn) ErrRedisExists(key string) (bool, bool) {
 	if conn == nil {
-		exce.LogError("redis exists -> redis nil", key)
+		LogError("redis exists -> redis nil", key)
 		return false, false
 	}
 
 	v, err := conn.Conn.Exists(ctx, key).Result()
 	if err != nil {
-		exce.LogError("redis exists -> error:"+err.Error(), key)
+		LogError("redis exists -> error:"+err.Error(), key)
 		return false, false
 	}
 	return v > 0, true
@@ -365,13 +364,13 @@ func (conn *redisConn) RedisExists(key string) bool {
 
 func (conn *redisConn) ErrRedisHExists(key, field string) (bool, bool) {
 	if conn == nil {
-		exce.LogError("redis hexists -> redis nil", key)
+		LogError("redis hexists -> redis nil", key)
 		return false, false
 	}
 
 	v, err := conn.Conn.HExists(ctx, key, field).Result()
 	if err != nil {
-		exce.LogError("redis hexists -> error:"+err.Error(), key)
+		LogError("redis hexists -> error:"+err.Error(), key)
 		return false, false
 	}
 	return v, true
@@ -389,13 +388,13 @@ func (conn *redisConn) RedisHExists(key, field string) bool {
 
 func (conn *redisConn) ErrRedisIncr(key string) (int64, bool) {
 	if conn == nil {
-		exce.LogError("redis incr -> redis nil", key)
+		LogError("redis incr -> redis nil", key)
 		return 0, false
 	}
 
 	v, err := conn.Conn.Incr(ctx, key).Result()
 	if err != nil {
-		exce.LogError("redis incr -> error:"+err.Error(), key)
+		LogError("redis incr -> error:"+err.Error(), key)
 		return 0, false
 	}
 	return v, true
@@ -413,13 +412,13 @@ func (conn *redisConn) RedisIncr(key string) int64 {
 
 func (conn *redisConn) ErrRedisSadd(key string, members ...interface{}) (int64, bool) {
 	if conn == nil {
-		exce.LogError("redis Sadd -> redis nil", key)
+		LogError("redis Sadd -> redis nil", key)
 		return 0, false
 	}
 
 	v, err := conn.Conn.SAdd(ctx, key, members...).Result()
 	if err != nil {
-		exce.LogError("redis Sadd -> error:"+err.Error(), key)
+		LogError("redis Sadd -> error:"+err.Error(), key)
 		return 0, false
 	}
 	return v, true
@@ -435,13 +434,13 @@ func (conn *redisConn) RedisSadd(key string, members ...interface{}) int64 {
 
 func (conn *redisConn) ErrRedisSMembers(key string) ([]string, bool) {
 	if conn == nil {
-		exce.LogError("redis SMembers -> redis nil", key)
+		LogError("redis SMembers -> redis nil", key)
 		return nil, false
 	}
 
 	v, err := conn.Conn.SMembers(ctx, key).Result()
 	if err != nil {
-		exce.LogError("redis SMembers -> error:"+err.Error(), key)
+		LogError("redis SMembers -> error:"+err.Error(), key)
 		return nil, false
 	}
 	return v, true
@@ -459,13 +458,13 @@ func (conn *redisConn) RedisSMembers(key string) []string {
 //***************************** 有序合集 set *****************************
 func (conn *redisConn) ErrRedisZADD(key string, members ...*redis.Z) (int64, bool) {
 	if conn == nil {
-		exce.LogError("redis ZAdd -> redis nil", key)
+		LogError("redis ZAdd -> redis nil", key)
 		return 0, false
 	}
 
 	v, err := conn.Conn.ZAdd(ctx, key, members...).Result()
 	if err != nil {
-		exce.LogError("redis ZAdd -> error:"+err.Error(), key)
+		LogError("redis ZAdd -> error:"+err.Error(), key)
 		return 0, false
 	}
 	return v, true
@@ -482,13 +481,13 @@ func (conn *redisConn) RedisZADD(key string, members ...*redis.Z) int64 {
 
 func (conn *redisConn) ErrRedisZIncrBy(key string, increment float64, member string) (float64, bool) {
 	if conn == nil {
-		exce.LogError("redis ZIncrBy -> redis nil", key)
+		LogError("redis ZIncrBy -> redis nil", key)
 		return 0, false
 	}
 
 	v, err := conn.Conn.ZIncrBy(ctx, key, increment, member).Result()
 	if err != nil {
-		exce.LogError("redis ZIncrBy -> error:"+err.Error(), key)
+		LogError("redis ZIncrBy -> error:"+err.Error(), key)
 		return 0, false
 	}
 	return v, true
@@ -507,13 +506,13 @@ func (conn *redisConn) RedisZIncrBy(key string, increment float64, member string
 //***************************** ZRange *****************************
 func (conn *redisConn) ErrRedisZRange(key string, start, stop int64) ([]string, bool) {
 	if conn == nil {
-		exce.LogError("redis ZRange -> redis nil", key)
+		LogError("redis ZRange -> redis nil", key)
 		return nil, false
 	}
 
 	v, err := conn.Conn.ZRange(ctx, key, start, stop).Result()
 	if err != nil {
-		exce.LogError("redis ZRange -> error:"+err.Error(), key)
+		LogError("redis ZRange -> error:"+err.Error(), key)
 		return nil, false
 	}
 	return v, true
@@ -532,13 +531,13 @@ func (conn *redisConn) RedisZRange(key string, start, stop int64) []string {
 //***************************** ZRevRange *****************************
 func (conn *redisConn) ErrRedisZRevRange(key string, start, stop int64) ([]string, bool) {
 	if conn == nil {
-		exce.LogError("redis ZRevRange -> redis nil", key)
+		LogError("redis ZRevRange -> redis nil", key)
 		return nil, false
 	}
 
 	v, err := conn.Conn.ZRevRange(ctx, key, start, stop).Result()
 	if err != nil {
-		exce.LogError("redis ZRevRange -> error:"+err.Error(), key)
+		LogError("redis ZRevRange -> error:"+err.Error(), key)
 		return nil, false
 	}
 	return v, true
@@ -557,13 +556,13 @@ func (conn *redisConn) RedisZRevRange(key string, start, stop int64) []string {
 //***************************** ZRevRangeWithScores *****************************
 func (conn *redisConn) ErrRedisZRevRangeWithScores(key string, start, stop int64) ([]redis.Z, bool) {
 	if conn == nil {
-		exce.LogError("redis ZRevRangeWithScores -> redis nil", key)
+		LogError("redis ZRevRangeWithScores -> redis nil", key)
 		return nil, false
 	}
 
 	v, err := conn.Conn.ZRevRangeWithScores(ctx, key, start, stop).Result()
 	if err != nil {
-		exce.LogError("redis ZRevRangeWithScores -> error:"+err.Error(), key)
+		LogError("redis ZRevRangeWithScores -> error:"+err.Error(), key)
 		return nil, false
 	}
 	return v, true

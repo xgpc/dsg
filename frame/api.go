@@ -2,7 +2,6 @@ package frame
 
 import (
 	"encoding/base64"
-	"fmt"
 	"github.com/go-redis/redis/v8"
 	"github.com/kataras/iris/v12"
 	"github.com/xgpc/dsg/exce"
@@ -76,7 +75,7 @@ func (this *Base) Token() (token string) {
 func (this *Base) Key() (rsa []byte) {
 	s := this.ctx.GetHeader("Key")
 	if s == "" {
-		exce.ThrowSys(exce.CodeReqParamMissing, "需要携带秘钥访问")
+		exce.ThrowSys(exce.CodeRequestError, "需要携带秘钥访问")
 	}
 	rsa, err := base64.StdEncoding.DecodeString(s)
 	if err != nil {
@@ -140,15 +139,15 @@ func (this *Base) Redis() *redis.Client {
 func (this *Base) CryptSend(data []byte) {
 	AesKey, err := cryptService.GenKeyByte(16)
 	if err != nil {
-		exce.ThrowSys(exce.CodeSysBusy, err.Error())
+		exce.ThrowSys(err)
 	}
 	iv, err := cryptService.GenKeyByte(16)
 	if err != nil {
-		exce.ThrowSys(exce.CodeSysBusy, err.Error())
+		exce.ThrowSys(err)
 	}
 	encrypted, err := cryptService.AesEncrypt(data, AesKey, iv)
 	if err != nil {
-		panic(err)
+		exce.ThrowSys(err)
 	}
 	//对AES秘钥加密
 	rsaEncrypt := cryptService.RSAEncrypt(AesKey, this.Key())
@@ -178,7 +177,7 @@ func (this *Base) CryptReceive() []byte {
 	decryptAESKey := cryptService.RSADecrypt(param.Key, cryptService.RSAKey.Private)
 	origin, err := cryptService.AesDecrypt(param.Data, decryptAESKey, param.IV)
 	if err != nil {
-		fmt.Println(err)
+		exce.ThrowSys(err)
 	}
 	//<----------
 	return origin

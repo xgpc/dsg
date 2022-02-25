@@ -44,7 +44,7 @@ func (this *Base) ValidateParam(data interface{}) {
 	// 加载验证参数
 	err := validatorService.GetTranslations().ValidateParam(data)
 	if err != nil {
-		exce.ThrowSys(exce.CodeReqParamError, err.Error())
+		exce.ThrowSys(exce.CodeRequestError, err.Error())
 	}
 }
 
@@ -53,7 +53,7 @@ func (this *Base) InitAndBackParam(data interface{}) (param map[string]interface
 	param = make(map[string]interface{})
 	err := this.ctx.ReadJSON(&param)
 	if err != nil {
-		exce.ThrowSys(exce.CodeReqParamError, err.Error())
+		exce.ThrowSys(nil, exce.CodeRequestError, "参数格式错误")
 	}
 
 	// 请求参数
@@ -64,11 +64,11 @@ func (this *Base) InitAndBackParam(data interface{}) (param map[string]interface
 
 	marshal, err := json.Marshal(param)
 	if err != nil {
-		exce.ThrowSys(exce.CodeReqParamError, err.Error())
+		exce.ThrowSys(err)
 	}
 	err = json.Unmarshal(marshal, &data)
 	if err != nil {
-		exce.ThrowSys(exce.CodeReqParamError, err.Error())
+		exce.ThrowSys(err)
 	}
 	this.ValidateParam(data)
 	return
@@ -103,7 +103,7 @@ func (this *Base) ReplaceParamColumn(data, old interface{}, requestParam map[str
 func (this *Base) initParamPost(data interface{}) {
 	err := this.ctx.ReadJSON(&data)
 	if err != nil {
-		exce.ThrowSys(exce.CodeReqParamError, err.Error())
+		exce.ThrowSys(nil, exce.CodeRequestError, "参数格式错误")
 	}
 }
 
@@ -116,7 +116,7 @@ func (this *Base) initParamGet(data interface{}) {
 		val = val.Elem()
 	}
 	if val.Kind() != reflect.Struct {
-		panic(exce.CodeReqParamError)
+		panic(exce.CodeRequestError)
 	}
 
 	for i := 0; i < val.NumField(); i++ {

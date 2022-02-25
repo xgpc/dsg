@@ -81,5 +81,6 @@ type Wechat struct {
 // SysConfig 系统配置
 type SysConfig struct {
 	// 定时器
-	StartSchedule bool `yaml:"startSchedule"`
+	StartSchedule bool   `yaml:"startSchedule"`
+	LogLevel      string `yaml:"logLevel"`
 }

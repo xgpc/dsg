@@ -1,6 +1,7 @@
 package schedule
 
 import (
+	"errors"
 	"github.com/xgpc/dsg/exce"
 	"time"
 )
@@ -293,11 +294,11 @@ func (t *TimerData) myHandler() {
 				switch v := e.(type) {
 				case exce.SysException:
 				case string:
-					exce.ThrowSys(exce.CodeSysBusy, "定时器处理错误："+v)
+					exce.ThrowSys(errors.New("定时器处理错误：" + v))
 				case error:
-					exce.ThrowSys(exce.CodeSysBusy, "定时器处理错误："+e.(error).Error())
+					exce.ThrowSys(e.(error))
 				default:
-					exce.ThrowSys(exce.CodeSysBusy, "")
+					exce.ThrowSys(errors.New("定时器处理错误"))
 				}
 			}
 		}()

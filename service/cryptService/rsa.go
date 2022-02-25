@@ -5,7 +5,7 @@ import (
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
-	"fmt"
+	"github.com/xgpc/dsg/exce"
 	"os"
 )
 
@@ -33,14 +33,14 @@ func RSAEncrypt(plainText []byte, key []byte) []byte {
 
 	publicKeyInterface, err := x509.ParsePKIXPublicKey(block.Bytes)
 	if err != nil {
-		fmt.Println("err:", err)
+		exce.ThrowSys(err)
 	}
 	//类型断言
 	publicKey := publicKeyInterface.(*rsa.PublicKey)
 	//对明文进行加密
 	cipherText, err := rsa.EncryptPKCS1v15(rand.Reader, publicKey, plainText)
 	if err != nil {
-		panic(err)
+		exce.ThrowSys(err)
 	}
 	return cipherText
 }
@@ -53,12 +53,12 @@ func RSADecrypt(cipherText []byte, key []byte) []byte {
 	//X509解码
 	privateKey, err := x509.ParsePKCS1PrivateKey(decode.Bytes)
 	if err != nil {
-		panic(err)
+		exce.ThrowSys(err)
 	}
 	//对密文进行解密
 	plainText, err := rsa.DecryptPKCS1v15(rand.Reader, privateKey, cipherText)
 	if err != nil {
-		fmt.Println("err:", err)
+		exce.ThrowSys(err)
 	}
 	//返回明文
 	return plainText
