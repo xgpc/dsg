@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"runtime/debug"
 	"time"
 )
 
@@ -23,6 +24,10 @@ func Write(data string) {
 	t := time.Now().Format("2006-01-02 15:4:05")
 
 	_, err = f.WriteString(t + " " + data)
+	if err != nil {
+		log.Println(err)
+	}
+	_, err = f.Write(debug.Stack())
 	if err != nil {
 		log.Println(err)
 	}

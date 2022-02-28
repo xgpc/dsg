@@ -12,8 +12,6 @@ const (
 (
     id     int unsigned auto_increment comment '主键'
         primary key,
-    open_id varchar(32) null comment '微信openID',
-
 	created_at int unsigned comment '创建时间',
 	updated_at int unsigned comment '更新时间',
     constraint user_id_uindex

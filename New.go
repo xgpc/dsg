@@ -9,7 +9,7 @@ package dsg
 import (
 	"github.com/kataras/iris/v12"
 	"github.com/xgpc/dsg/frame"
-	"github.com/xgpc/dsg/middleware"
+	//"github.com/xgpc/dsg/middleware"
 	"github.com/xgpc/dsg/router"
 	service2 "github.com/xgpc/dsg/service"
 )
@@ -25,7 +25,7 @@ func New() *service {
 	frame.Load(app, "config.yaml")
 
 	// 中间件
-	middleware.Load(app)
+	//middleware.Load(app)
 
 	//路由
 	router.Load(app)

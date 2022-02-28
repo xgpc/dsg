@@ -8,12 +8,12 @@ import (
 	"runtime"
 )
 
-type dsgError int
+type DsgError int
 
-func (d dsgError) Error() string {
+func (d DsgError) Error() string {
 	return ErrString[d]
 }
-func (d dsgError) Code() int {
+func (d DsgError) Code() int {
 	return int(reflect.ValueOf(d).Int())
 }
 
@@ -21,12 +21,12 @@ const (
 	CodeOK = 0
 )
 const (
-	CodeSysBusy dsgError = 1001 + iota
+	CodeSysBusy DsgError = 1001 + iota
 )
 
 //用户类
 const (
-	CodeUserError dsgError = 2001 + iota
+	CodeUserError DsgError = 2001 + iota
 	CodeUserNoLogin
 	CodeUserNoAuth
 )
@@ -34,15 +34,16 @@ const (
 const (
 	//	请求
 
-	CodeRequestError dsgError = 4001 + iota
+	CodeRequestError DsgError = 3001 + iota
 )
 
-var ErrString = map[dsgError]string{
+var ErrString = map[DsgError]string{
 	CodeOK: "ok",
 	//系统
 	CodeSysBusy: "[error] 系统繁忙，请稍后重试",
 
 	//	用户
+	CodeUserError:   "[error] 用户类错误",
 	CodeUserNoLogin: "[error] 请先登录",
 	CodeUserNoAuth:  "[error] 抱歉，您的角色没有此功能的操作权限，请联系技术人员",
 
@@ -79,7 +80,7 @@ func ThrowSys(err error, args ...interface{}) {
 		e.Msg = ErrString[CodeSysBusy]
 		panic(e)
 	}
-	temp := err.(dsgError)
+	temp := err.(DsgError)
 	switch num {
 	case 0:
 		e.Code = temp.Code()

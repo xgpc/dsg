@@ -34,13 +34,6 @@ func logHandle(level ErrorLevel, msg string, data *interface{}) {
 	if sysLogLevel == ErrLevel[level] || level == LogLevelError {
 		exce.Write("[" + ErrLevel[level] + "] " + msg + ":" + dealCon(data) + "\n")
 	}
-
-	//// 追加调用栈
-	//if level == LogLevelError {
-	//
-	//    exce.Write(string(debug.Stack()))
-	//}
-
 }
 
 func dealCon(content *interface{}) string {

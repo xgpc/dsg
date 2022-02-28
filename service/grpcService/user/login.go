@@ -2,10 +2,11 @@ package user
 
 import (
 	"context"
+	"github.com/xgpc/dsg/exce"
 	"github.com/xgpc/dsg/service/grpcService/proto"
 )
 
-func Login(loginType uint32, device, mobile, code string) (string, error) {
+func Login(loginType uint32, device, mobile, code string) string {
 	c := proto.NewUserServiceClient(proto.GRPCConn)
 	//调用函数
 	reply, err := c.Login(context.Background(), &proto.Login{
@@ -17,6 +18,8 @@ func Login(loginType uint32, device, mobile, code string) (string, error) {
 		//验证码
 		Code: code,
 	})
-	return reply.GetToken(), err
-
+	if err != nil {
+		exce.ParseErr(err)
+	}
+	return reply.GetToken()
 }

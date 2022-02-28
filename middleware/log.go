@@ -12,7 +12,6 @@ func ExceptionLog(ctx iris.Context) {
 				return
 			}
 			exce.DealException(ctx, err)
-
 			ctx.StopExecution()
 		}
 	}()

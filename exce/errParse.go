@@ -10,9 +10,9 @@ func ParseErr(err error) {
 			msg := fromError.Proto().GetMessage()
 			code := fromError.Proto().GetCode()
 			if msg == "" {
-				msg = ErrString[dsgError(code)]
+				msg = ErrString[DsgError(code)]
 			}
-			ThrowSys(dsgError(code), msg)
+			ThrowSys(DsgError(code), msg)
 		}
 		ThrowSys(err)
 	}

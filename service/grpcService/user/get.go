@@ -3,38 +3,47 @@ package user
 import (
 	"context"
 	"fmt"
+	"github.com/xgpc/dsg/exce"
 	"github.com/xgpc/dsg/service/grpcService/proto"
 )
 
 // Get 用户ID和手机号
-func Get(id uint32) (uint32, string, error) {
+func Get(id uint32) (uint32, string) {
 	c := proto.NewUserServiceClient(proto.GRPCConn)
 	r, err := c.GetByID(context.Background(), &proto.UserID{
 		Id: id,
 	})
 
-	return r.GetId(), r.GetMobile(), err
+	if err != nil {
+		exce.ParseErr(err)
+	}
+	return r.GetId(), r.GetMobile()
 }
 
 // GetInfoByToken 通过token获取userID和openID
-func GetInfoByToken(token string) (userID uint32, openID string, err error) {
+func GetInfoByToken(token string) (userID uint32, openID string) {
 	c := proto.NewUserServiceClient(proto.GRPCConn)
 	//调用函数
 	reply, err := c.GetInfoByToken(context.Background(), &proto.Token{
 		Token: token,
 	})
-	return reply.GetUserID(), reply.GetOpenID(), err
+	if err != nil {
+		exce.ParseErr(err)
+	}
+	return reply.GetUserID(), reply.GetOpenID()
 }
 
 // GetIDByMobile 通过手机号查询
-func GetIDByMobile(mobile string) (uint32, error) {
+func GetIDByMobile(mobile string) uint32 {
 	c := proto.NewUserServiceClient(proto.GRPCConn)
 	//调用函数
 	reply, err := c.GetIDByMobile(context.Background(), &proto.Mobile{
 		Mobile: mobile,
 	})
-	return reply.GetId(), err
-
+	if err != nil {
+		exce.ParseErr(err)
+	}
+	return reply.GetId()
 }
 
 // ListByIDs 多用户ID查询
@@ -43,7 +52,7 @@ func ListByIDs(id []uint32) []proto.User {
 
 	stream, err := c.ListByIDs(context.Background())
 	if err != nil {
-		fmt.Println(err)
+		exce.ParseErr(err)
 	}
 
 	// 传输参数
