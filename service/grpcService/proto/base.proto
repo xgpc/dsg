@@ -85,8 +85,10 @@ service WechatService {
   rpc Login(WechatLogin) returns (token) {}
   // 获取access_token
   rpc GetAccessToken(AppID) returns (token) {}
+  //  从用户系统获取
+  rpc GetAccessTokenFromUser(AppID) returns (token) {}
   //  微信绑定用户信息
-  rpc BindUser(WechatMobile) returns (google.protobuf.Empty) {}
+  rpc BindUser(WechatMobile) returns (UserID) {}
 }
 
 message OpenID {

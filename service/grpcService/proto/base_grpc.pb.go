@@ -490,8 +490,10 @@ type WechatServiceClient interface {
 	Login(ctx context.Context, in *WechatLogin, opts ...grpc.CallOption) (*Token, error)
 	// 获取access_token
 	GetAccessToken(ctx context.Context, in *AppID, opts ...grpc.CallOption) (*Token, error)
+	//  从用户系统获取
+	GetAccessTokenFromUser(ctx context.Context, in *AppID, opts ...grpc.CallOption) (*Token, error)
 	//  微信绑定用户信息
-	BindUser(ctx context.Context, in *WechatMobile, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	BindUser(ctx context.Context, in *WechatMobile, opts ...grpc.CallOption) (*UserID, error)
 }
 
 type wechatServiceClient struct {
@@ -520,8 +522,17 @@ func (c *wechatServiceClient) GetAccessToken(ctx context.Context, in *AppID, opt
 	return out, nil
 }
 
-func (c *wechatServiceClient) BindUser(ctx context.Context, in *WechatMobile, opts ...grpc.CallOption) (*emptypb.Empty, error) {
-	out := new(emptypb.Empty)
+func (c *wechatServiceClient) GetAccessTokenFromUser(ctx context.Context, in *AppID, opts ...grpc.CallOption) (*Token, error) {
+	out := new(Token)
+	err := c.cc.Invoke(ctx, "/proto.WechatService/GetAccessTokenFromUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *wechatServiceClient) BindUser(ctx context.Context, in *WechatMobile, opts ...grpc.CallOption) (*UserID, error) {
+	out := new(UserID)
 	err := c.cc.Invoke(ctx, "/proto.WechatService/BindUser", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -537,8 +548,10 @@ type WechatServiceServer interface {
 	Login(context.Context, *WechatLogin) (*Token, error)
 	// 获取access_token
 	GetAccessToken(context.Context, *AppID) (*Token, error)
+	//  从用户系统获取
+	GetAccessTokenFromUser(context.Context, *AppID) (*Token, error)
 	//  微信绑定用户信息
-	BindUser(context.Context, *WechatMobile) (*emptypb.Empty, error)
+	BindUser(context.Context, *WechatMobile) (*UserID, error)
 	mustEmbedUnimplementedWechatServiceServer()
 }
 
@@ -552,7 +565,10 @@ func (UnimplementedWechatServiceServer) Login(context.Context, *WechatLogin) (*T
 func (UnimplementedWechatServiceServer) GetAccessToken(context.Context, *AppID) (*Token, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAccessToken not implemented")
 }
-func (UnimplementedWechatServiceServer) BindUser(context.Context, *WechatMobile) (*emptypb.Empty, error) {
+func (UnimplementedWechatServiceServer) GetAccessTokenFromUser(context.Context, *AppID) (*Token, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAccessTokenFromUser not implemented")
+}
+func (UnimplementedWechatServiceServer) BindUser(context.Context, *WechatMobile) (*UserID, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method BindUser not implemented")
 }
 func (UnimplementedWechatServiceServer) mustEmbedUnimplementedWechatServiceServer() {}
@@ -604,6 +620,24 @@ func _WechatService_GetAccessToken_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _WechatService_GetAccessTokenFromUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AppID)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(WechatServiceServer).GetAccessTokenFromUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.WechatService/GetAccessTokenFromUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(WechatServiceServer).GetAccessTokenFromUser(ctx, req.(*AppID))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _WechatService_BindUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(WechatMobile)
 	if err := dec(in); err != nil {
@@ -636,6 +670,10 @@ var WechatService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAccessToken",
 			Handler:    _WechatService_GetAccessToken_Handler,
+		},
+		{
+			MethodName: "GetAccessTokenFromUser",
+			Handler:    _WechatService_GetAccessTokenFromUser_Handler,
 		},
 		{
 			MethodName: "BindUser",

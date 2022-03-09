@@ -1,0 +1,43 @@
+version: "3"
+services:
+  compile:
+    image: golang:1.17-alpine3.15
+    environment:
+      - GO111MODULE=on
+      - GOPROXY=https://goproxy.cn,direct
+      - TZ=Asia/Shanghai
+      - GOOS=linux
+      - GOARCH=amd64
+    working_dir: /go/app
+    volumes:
+      - /pkg:/go/pkg
+      - ../:/go/app
+    command: go build -o main.sh /go/app/main.go
+
+  server:
+    image: alpine:3.15
+    ports:
+      - "88:88"
+    depends_on:
+      - redis
+      - compile
+    working_dir: /app
+    volumes:
+      - ../:/app
+    restart: always
+    environment:
+      - TZ=Asia/Shanghai
+    links:
+      - redis
+    command: /bin/sh -c "sed -i 's/dl-cdn.alpinelinux.org/mirrors.ustc.edu.cn/g' /etc/apk/repositories
+      && apk add tzdata
+      && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime
+      && ../main.sh"
+
+  redis:
+    image: redis:6.2
+    volumes:
+      - ../data:/data
+    expose:
+      - "6379"
+    restart: always

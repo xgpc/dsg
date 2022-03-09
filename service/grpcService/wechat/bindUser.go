@@ -7,10 +7,10 @@ import (
 )
 
 // BindUser 绑定用户
-func BindUser(mobile string, openID string, sysCode uint32) {
+func BindUser(mobile string, openID string, sysCode uint32) uint32 {
 	c := proto.NewWechatServiceClient(proto.GRPCConn)
 	//调用函数
-	_, err := c.BindUser(context.Background(), &proto.WechatMobile{
+	r, err := c.BindUser(context.Background(), &proto.WechatMobile{
 		Mobile:  mobile,
 		OpenID:  openID,
 		SysCode: sysCode,
@@ -18,4 +18,5 @@ func BindUser(mobile string, openID string, sysCode uint32) {
 	if err != nil {
 		exce.ParseErr(err)
 	}
+	return r.GetId()
 }

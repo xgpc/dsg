@@ -1,0 +1,33 @@
+app:
+  appName: server
+  cnName:  xx服务
+  port: 8080
+  #  rpc地址： 远程调用：地址+端口
+  rpcAddr:
+  #  系统编码
+  sysCode: 2
+  #  https
+  tls:
+mysql:
+  host: 127.0.0.1
+  port: 3306
+  database: demo
+  user: user
+  password: pwd
+  maxIdleConns: 5
+  maxOpenConns: 20
+  connMaxIdleTime: 300
+  connMaxLifetime: 3600
+redis:
+  host: 127.0.0.1
+  port: 6379
+  db: 0
+  password:
+  poolSize: 120
+  MinIdleConns: 20
+# 系统配置
+sysConfig:
+  #  定时器： true,false
+  startSchedule: false
+#  普通日志级别： "info","error"
+  logLevel: error
