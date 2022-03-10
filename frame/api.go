@@ -86,8 +86,8 @@ func (this *Base) Key() (rsa []byte) {
 
 func (this *Base) Success() {
 	this.resp(map[string]interface{}{
-		"Code": CodeSuccess,
-		"Msg":  "ok",
+		"code": CodeSuccess,
+		"msg":  "ok",
 	})
 }
 
@@ -107,8 +107,8 @@ func (this *Base) SuccessWithList(list interface{}, total int64) {
 	}
 	var res = &ResJson{
 		CodeSuccess, "查询成功", iris.Map{
-			"Total": total,
-			"List":  list,
+			"total": total,
+			"list":  list,
 		},
 	}
 	this.resp(res)
@@ -153,9 +153,9 @@ func (this *Base) CryptSend(data []byte) {
 	rsaEncrypt := cryptService.RSAEncrypt(AesKey, this.Key())
 
 	this.SuccessWithData(map[string]interface{}{
-		"Key":  rsaEncrypt,
-		"Tag":  iv,
-		"Data": encrypted,
+		"key":  rsaEncrypt,
+		"tag":  iv,
+		"data": encrypted,
 	})
 
 }
