@@ -1,40 +1,38 @@
+// Package service
+// @Author:        asus
+// @Description:   $
+// @File:          random
+// @Data:          2021/12/2318:44
+//
 package util
 
 import (
-	"github.com/satori/go.uuid"
 	"math/rand"
+	"time"
 )
 
 var randomChars = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789")
 var randomNumber = []rune("0123456789")
 
-func Uuid() string {
-	//var u, err = uuid.NewV4()
-	//if err != nil {
-	//	panic(err)
-	//}
-	var u = uuid.NewV4()
+var rander = rand.New(rand.NewSource(time.Now().UnixNano()))
 
-	var str = u.String()
-	return Replace(&str, "-", "")
+//随机生成字符串
+func RandStr(length int, letter []rune) string {
+	b := make([]rune, length)
+	randomCharsLen := len(letter)
+
+	for i := range b {
+		b[i] = letter[rander.Intn(randomCharsLen)]
+	}
+	return string(b)
 }
 
 func RandomStr(length int) string {
-	b := make([]rune, length)
-	randomCharsLen := len(randomChars)
-	for i := range b {
-		b[i] = randomChars[rand.Intn(randomCharsLen)]
-	}
-	return string(b)
+	return RandStr(length, randomChars)
 }
 
 func RandomNumber(length int) string {
-	b := make([]rune, length)
-	randomCharsLen := len(randomNumber)
-	for i := range b {
-		b[i] = randomNumber[rand.Intn(randomCharsLen)]
-	}
-	return string(b)
+	return RandStr(length, randomNumber)
 }
 
 func RandomInt(length int) int {
