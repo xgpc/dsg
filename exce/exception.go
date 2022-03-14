@@ -51,8 +51,8 @@ var ErrString = map[DsgError]string{
 }
 
 type SysException struct {
-	Code int
-	Msg  string
+	Code int    `json:"code"`
+	Msg  string `json:"msg"`
 }
 
 // ThrowSys 抛出错误
