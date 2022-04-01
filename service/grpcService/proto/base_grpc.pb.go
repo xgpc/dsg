@@ -27,6 +27,8 @@ type UserServiceClient interface {
 	Login(ctx context.Context, in *Login, opts ...grpc.CallOption) (*Token, error)
 	//  刷新token
 	ExpireToken(ctx context.Context, in *Token, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	//  刷新token
+	ExpireTokenByID(ctx context.Context, in *Token, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	// 修改手机号
 	UpdateMobile(ctx context.Context, in *User, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
@@ -115,6 +117,15 @@ func (c *userServiceClient) ExpireToken(ctx context.Context, in *Token, opts ...
 	return out, nil
 }
 
+func (c *userServiceClient) ExpireTokenByID(ctx context.Context, in *Token, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/proto.UserService/ExpireTokenByID", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *userServiceClient) UpdateMobile(ctx context.Context, in *User, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, "/proto.UserService/UpdateMobile", in, out, opts...)
@@ -136,6 +147,8 @@ type UserServiceServer interface {
 	Login(context.Context, *Login) (*Token, error)
 	//  刷新token
 	ExpireToken(context.Context, *Token) (*emptypb.Empty, error)
+	//  刷新token
+	ExpireTokenByID(context.Context, *Token) (*emptypb.Empty, error)
 	// 修改手机号
 	UpdateMobile(context.Context, *User) (*emptypb.Empty, error)
 	mustEmbedUnimplementedUserServiceServer()
@@ -162,6 +175,9 @@ func (UnimplementedUserServiceServer) Login(context.Context, *Login) (*Token, er
 }
 func (UnimplementedUserServiceServer) ExpireToken(context.Context, *Token) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ExpireToken not implemented")
+}
+func (UnimplementedUserServiceServer) ExpireTokenByID(context.Context, *Token) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ExpireTokenByID not implemented")
 }
 func (UnimplementedUserServiceServer) UpdateMobile(context.Context, *User) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateMobile not implemented")
@@ -295,6 +311,24 @@ func _UserService_ExpireToken_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserService_ExpireTokenByID_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(Token)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserServiceServer).ExpireTokenByID(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.UserService/ExpireTokenByID",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserServiceServer).ExpireTokenByID(ctx, req.(*Token))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _UserService_UpdateMobile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(User)
 	if err := dec(in); err != nil {
@@ -341,6 +375,10 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _UserService_ExpireToken_Handler,
 		},
 		{
+			MethodName: "ExpireTokenByID",
+			Handler:    _UserService_ExpireTokenByID_Handler,
+		},
+		{
 			MethodName: "UpdateMobile",
 			Handler:    _UserService_UpdateMobile_Handler,
 		},
@@ -353,7 +391,7 @@ var UserService_ServiceDesc = grpc.ServiceDesc{
 			ClientStreams: true,
 		},
 	},
-	Metadata: "base.proto",
+	Metadata: "service/grpcService/proto/base.proto",
 }
 
 // MsgServiceClient is the client API for MsgService service.
@@ -479,7 +517,7 @@ var MsgService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "base.proto",
+	Metadata: "service/grpcService/proto/base.proto",
 }
 
 // WechatServiceClient is the client API for WechatService service.
@@ -487,7 +525,7 @@ var MsgService_ServiceDesc = grpc.ServiceDesc{
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type WechatServiceClient interface {
 	//  登录
-	Login(ctx context.Context, in *WechatLogin, opts ...grpc.CallOption) (*Token, error)
+	Login(ctx context.Context, in *WechatLogin, opts ...grpc.CallOption) (*MiniLoginBack, error)
 	// 获取access_token
 	GetAccessToken(ctx context.Context, in *AppID, opts ...grpc.CallOption) (*Token, error)
 	//  从用户系统获取
@@ -504,8 +542,8 @@ func NewWechatServiceClient(cc grpc.ClientConnInterface) WechatServiceClient {
 	return &wechatServiceClient{cc}
 }
 
-func (c *wechatServiceClient) Login(ctx context.Context, in *WechatLogin, opts ...grpc.CallOption) (*Token, error) {
-	out := new(Token)
+func (c *wechatServiceClient) Login(ctx context.Context, in *WechatLogin, opts ...grpc.CallOption) (*MiniLoginBack, error) {
+	out := new(MiniLoginBack)
 	err := c.cc.Invoke(ctx, "/proto.WechatService/Login", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -545,7 +583,7 @@ func (c *wechatServiceClient) BindUser(ctx context.Context, in *WechatMobile, op
 // for forward compatibility
 type WechatServiceServer interface {
 	//  登录
-	Login(context.Context, *WechatLogin) (*Token, error)
+	Login(context.Context, *WechatLogin) (*MiniLoginBack, error)
 	// 获取access_token
 	GetAccessToken(context.Context, *AppID) (*Token, error)
 	//  从用户系统获取
@@ -559,7 +597,7 @@ type WechatServiceServer interface {
 type UnimplementedWechatServiceServer struct {
 }
 
-func (UnimplementedWechatServiceServer) Login(context.Context, *WechatLogin) (*Token, error) {
+func (UnimplementedWechatServiceServer) Login(context.Context, *WechatLogin) (*MiniLoginBack, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Login not implemented")
 }
 func (UnimplementedWechatServiceServer) GetAccessToken(context.Context, *AppID) (*Token, error) {
@@ -681,5 +719,253 @@ var WechatService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "base.proto",
+	Metadata: "service/grpcService/proto/base.proto",
+}
+
+// UserCardClient is the client API for UserCard service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type UserCardClient interface {
+	// 获取信息
+	GetUserCard(ctx context.Context, in *UserCardReq, opts ...grpc.CallOption) (*UserCardRes, error)
+	// 修改身份信息
+	UpdateUserCard(ctx context.Context, in *UpdateUserCardReq, opts ...grpc.CallOption) (*emptypb.Empty, error)
+}
+
+type userCardClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewUserCardClient(cc grpc.ClientConnInterface) UserCardClient {
+	return &userCardClient{cc}
+}
+
+func (c *userCardClient) GetUserCard(ctx context.Context, in *UserCardReq, opts ...grpc.CallOption) (*UserCardRes, error) {
+	out := new(UserCardRes)
+	err := c.cc.Invoke(ctx, "/proto.UserCard/GetUserCard", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userCardClient) UpdateUserCard(ctx context.Context, in *UpdateUserCardReq, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/proto.UserCard/UpdateUserCard", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// UserCardServer is the server API for UserCard service.
+// All implementations must embed UnimplementedUserCardServer
+// for forward compatibility
+type UserCardServer interface {
+	// 获取信息
+	GetUserCard(context.Context, *UserCardReq) (*UserCardRes, error)
+	// 修改身份信息
+	UpdateUserCard(context.Context, *UpdateUserCardReq) (*emptypb.Empty, error)
+	mustEmbedUnimplementedUserCardServer()
+}
+
+// UnimplementedUserCardServer must be embedded to have forward compatible implementations.
+type UnimplementedUserCardServer struct {
+}
+
+func (UnimplementedUserCardServer) GetUserCard(context.Context, *UserCardReq) (*UserCardRes, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserCard not implemented")
+}
+func (UnimplementedUserCardServer) UpdateUserCard(context.Context, *UpdateUserCardReq) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateUserCard not implemented")
+}
+func (UnimplementedUserCardServer) mustEmbedUnimplementedUserCardServer() {}
+
+// UnsafeUserCardServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to UserCardServer will
+// result in compilation errors.
+type UnsafeUserCardServer interface {
+	mustEmbedUnimplementedUserCardServer()
+}
+
+func RegisterUserCardServer(s grpc.ServiceRegistrar, srv UserCardServer) {
+	s.RegisterService(&UserCard_ServiceDesc, srv)
+}
+
+func _UserCard_GetUserCard_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserCardReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserCardServer).GetUserCard(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.UserCard/GetUserCard",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserCardServer).GetUserCard(ctx, req.(*UserCardReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserCard_UpdateUserCard_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateUserCardReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserCardServer).UpdateUserCard(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.UserCard/UpdateUserCard",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserCardServer).UpdateUserCard(ctx, req.(*UpdateUserCardReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// UserCard_ServiceDesc is the grpc.ServiceDesc for UserCard service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var UserCard_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "proto.UserCard",
+	HandlerType: (*UserCardServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetUserCard",
+			Handler:    _UserCard_GetUserCard_Handler,
+		},
+		{
+			MethodName: "UpdateUserCard",
+			Handler:    _UserCard_UpdateUserCard_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "service/grpcService/proto/base.proto",
+}
+
+// UserHistoryClient is the client API for UserHistory service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type UserHistoryClient interface {
+	Add(ctx context.Context, in *UserHistoryAddReq, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	Query(ctx context.Context, in *UserHistoryQueryReq, opts ...grpc.CallOption) (*UserHistoryQueryRes, error)
+}
+
+type userHistoryClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewUserHistoryClient(cc grpc.ClientConnInterface) UserHistoryClient {
+	return &userHistoryClient{cc}
+}
+
+func (c *userHistoryClient) Add(ctx context.Context, in *UserHistoryAddReq, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/proto.UserHistory/Add", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userHistoryClient) Query(ctx context.Context, in *UserHistoryQueryReq, opts ...grpc.CallOption) (*UserHistoryQueryRes, error) {
+	out := new(UserHistoryQueryRes)
+	err := c.cc.Invoke(ctx, "/proto.UserHistory/Query", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// UserHistoryServer is the server API for UserHistory service.
+// All implementations must embed UnimplementedUserHistoryServer
+// for forward compatibility
+type UserHistoryServer interface {
+	Add(context.Context, *UserHistoryAddReq) (*emptypb.Empty, error)
+	Query(context.Context, *UserHistoryQueryReq) (*UserHistoryQueryRes, error)
+	mustEmbedUnimplementedUserHistoryServer()
+}
+
+// UnimplementedUserHistoryServer must be embedded to have forward compatible implementations.
+type UnimplementedUserHistoryServer struct {
+}
+
+func (UnimplementedUserHistoryServer) Add(context.Context, *UserHistoryAddReq) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Add not implemented")
+}
+func (UnimplementedUserHistoryServer) Query(context.Context, *UserHistoryQueryReq) (*UserHistoryQueryRes, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Query not implemented")
+}
+func (UnimplementedUserHistoryServer) mustEmbedUnimplementedUserHistoryServer() {}
+
+// UnsafeUserHistoryServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to UserHistoryServer will
+// result in compilation errors.
+type UnsafeUserHistoryServer interface {
+	mustEmbedUnimplementedUserHistoryServer()
+}
+
+func RegisterUserHistoryServer(s grpc.ServiceRegistrar, srv UserHistoryServer) {
+	s.RegisterService(&UserHistory_ServiceDesc, srv)
+}
+
+func _UserHistory_Add_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserHistoryAddReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserHistoryServer).Add(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.UserHistory/Add",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserHistoryServer).Add(ctx, req.(*UserHistoryAddReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserHistory_Query_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserHistoryQueryReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserHistoryServer).Query(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.UserHistory/Query",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserHistoryServer).Query(ctx, req.(*UserHistoryQueryReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// UserHistory_ServiceDesc is the grpc.ServiceDesc for UserHistory service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var UserHistory_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "proto.UserHistory",
+	HandlerType: (*UserHistoryServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "Add",
+			Handler:    _UserHistory_Add_Handler,
+		},
+		{
+			MethodName: "Query",
+			Handler:    _UserHistory_Query_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "service/grpcService/proto/base.proto",
 }

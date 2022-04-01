@@ -17,6 +17,8 @@ service UserService {
   rpc Login (login) returns (token) {}
   //  刷新token
   rpc ExpireToken (token) returns (google.protobuf.Empty) {}
+  //  刷新token
+  rpc ExpireTokenByID (token) returns (google.protobuf.Empty) {}
   // 修改手机号
   rpc UpdateMobile (User) returns (google.protobuf.Empty) {}
 }
@@ -48,6 +50,7 @@ message msg {
 
 message token {
   string token = 1;
+  uint32 userID =2;
 }
 
 message mobile {
@@ -82,13 +85,18 @@ message UserList{
 //微信公众号、小程序
 service WechatService {
   //  登录
-  rpc Login(WechatLogin) returns (token) {}
+  rpc Login(WechatLogin) returns (MiniLoginBack) {}
   // 获取access_token
   rpc GetAccessToken(AppID) returns (token) {}
   //  从用户系统获取
   rpc GetAccessTokenFromUser(AppID) returns (token) {}
   //  微信绑定用户信息
   rpc BindUser(WechatMobile) returns (UserID) {}
+}
+
+message MiniLoginBack {
+  string token = 1;
+  string sessionKey = 2;
 }
 
 message OpenID {
@@ -116,4 +124,74 @@ message WechatMobile {
   string mobile = 1;
   string openID = 2;
   uint32 sysCode = 3;
+}
+
+
+// 用户身份信息
+service UserCard {
+  // 获取信息
+  rpc GetUserCard(UserCardReq) returns (UserCardRes){
+    //    option (google.protobuf.http) = {
+    //      post: "/api/userCard/get"
+    //
+    //        };
+  }
+  // 修改身份信息
+  rpc UpdateUserCard(UpdateUserCardReq) returns (google.protobuf.Empty){}
+}
+
+message UserCardReq {
+  uint32 userID =1;
+}
+
+message UserCardRes {
+  uint32 userID =1;
+  bool Gender   =2;
+  string RealName =3;
+  string UserImage=4;
+  string CardID   =5;
+  string CardType =6;
+  uint32 StartAt  =7;
+  uint32 EndAt    =8;
+  string CardCode =9;
+  string AreaCode =10;
+  string Address  =11;
+  string Email    =12;
+}
+
+message UpdateUserCardReq {
+  uint32 userID =1;
+  bytes body =2;
+}
+
+// 用户历史记录
+
+service UserHistory {
+  rpc Add(UserHistoryAddReq) returns (google.protobuf.Empty){};
+  rpc Query(UserHistoryQueryReq) returns (UserHistoryQueryRes){}
+}
+
+message UserHistoryAddReq {
+  uint32  UserID =1;
+  string SysCode =2;
+  bytes Body =3;
+}
+
+message UserHistoryQueryReq {
+  uint32  UserID =1;
+  uint32 StartAt=2;
+  uint32 EndAt=3;
+  repeated string SysCode =4;
+}
+
+
+message UserHistoryQueryRes {
+  repeated QueryBody List =1;
+}
+
+message QueryBody {
+  uint32 UserID =1;
+  string SysCode =2;
+  bytes Body=3;
+  uint32 CreatedAt=4;
 }
