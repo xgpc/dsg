@@ -62,8 +62,12 @@ func (this *Base) Ctx() iris.Context {
 	return this.ctx
 }
 
-func (this *Base) MyId() int {
-	return this.ctx.Values().GetIntDefault("mid", 0)
+func (this *Base) MyId() uint32 {
+	id, err := this.ctx.Values().GetUint32("mid")
+	if err != nil {
+		exce.ThrowSys(exce.CodeUserNoAuth, err.Error())
+	}
+	return id
 }
 
 func (this *Base) Token() (token string) {
