@@ -23,7 +23,7 @@ func LoginSub(appID, code string, sysCode uint32) string {
 }
 
 // LoginMini 小程序登录
-func LoginMini(appID, code string, sysCode uint32) string {
+func LoginMini(appID, code string, sysCode uint32) (string, string) {
 	c := proto.NewWechatServiceClient(proto.GRPCConn)
 	//调用函数
 	reply, err := c.Login(context.Background(), &proto.WechatLogin{
@@ -35,5 +35,5 @@ func LoginMini(appID, code string, sysCode uint32) string {
 	if err != nil {
 		exce.ParseErr(err)
 	}
-	return reply.GetToken()
+	return reply.GetSessionKey(), reply.GetToken()
 }
