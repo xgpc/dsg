@@ -1,8 +1,8 @@
 package router
 
 import (
-	"example/api/sys"
 	"github.com/kataras/iris/v12"
+	"github.com/xgpc/dsg/example/api/sys"
 )
 
 func Sys(party iris.Party) {

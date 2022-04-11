@@ -33,12 +33,17 @@ func LoadConf(path ...string) {
 }
 
 type conf struct {
-	App       App       `yaml:"app"`
-	Mysql     Mysql     `yaml:"mysql"`
-	Redis     Redis     `yaml:"redis"`
-	Message   Message   `yaml:"message"`
-	Wechat    Wechat    `yaml:"wechat"`
-	SysConfig SysConfig `yaml:"sysConfig"`
+	App           App           `yaml:"app"`
+	Mysql         Mysql         `yaml:"mysql"`
+	Redis         Redis         `yaml:"redis"`
+	Message       Message       `yaml:"message"`
+	Wechat        Wechat        `yaml:"wechat"`
+	SysConfig     SysConfig     `yaml:"sysConfig"`
+	Microservices Microservices `yaml:"microServices"`
+}
+
+type Microservices struct {
+	FileAddr string `yaml:"fileAddr"`
 }
 
 type App struct {

@@ -31,3 +31,8 @@ sysConfig:
   startSchedule: false
 #  普通日志级别： "info","error"
   logLevel: error
+
+# 微服务接口地址
+microServices:
+  # 文件服务地址 url
+  fileAddr:

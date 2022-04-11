@@ -1,9 +1,9 @@
 package main
 
 import (
-	"example/middleware"
-	"example/router"
-	"github.com/xgpc/dsg"
+    "github.com/xgpc/dsg"
+    "github.com/xgpc/dsg/example/router"
+    "github.com/xgpc/dsg/middleware"
 )
 
 // @title dsg框架测试样例

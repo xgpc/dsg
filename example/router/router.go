@@ -1,8 +1,9 @@
 package router
 
 import (
-	"example/api/category"
-	_ "example/docs"
+	"github.com/xgpc/dsg/example/api/category"
+	"github.com/xgpc/dsg/service/fileService"
+
 	"github.com/iris-contrib/swagger/v12"
 	"github.com/iris-contrib/swagger/v12/swaggerFiles"
 	"github.com/kataras/iris/v12"
@@ -11,6 +12,8 @@ import (
 
 // LoadRouter 注册路由
 func LoadRouter(app *iris.Application) {
+
+	fileService.Router(app)
 
 	swaggerUI := swagger.WrapHandler(swaggerFiles.Handler,
 		swagger.URL("127.0.0.1:19610/swagger/doc.json"),
@@ -23,4 +26,5 @@ func LoadRouter(app *iris.Application) {
 	Sys(api)
 	api.Post("/category", category.CreateCategory)
 	api.Get("/", category.GetList)
+
 }
