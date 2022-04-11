@@ -51,3 +51,39 @@ func UpdateUserCard(UserID uint32, data map[string]interface{}) {
 		exce.ParseErr(err)
 	}
 }
+
+func GetAddressList(userID uint32) *proto.UserCardRes {
+	c := proto.NewUserCardClient(proto.GRPCConn)
+	res, err := c.GetAddressList(context.Background(), &proto.UserCardReq{UserID: userID})
+	if err != nil {
+		exce.ParseErr(err)
+	}
+	return res
+}
+
+func InstallAddress(UserID uint32, data string) {
+	c := proto.NewUserCardClient(proto.GRPCConn)
+	_, err := c.InstallAddress(context.Background(), &proto.UpdateUserCardReq{
+		UserID: UserID,
+		Body:   []byte(data),
+	})
+	if err != nil {
+		exce.ParseErr(err)
+	}
+}
+
+func UpAddress(UserID uint32, data []string) {
+	body, err := util.JsonEncode(data)
+	if err != nil {
+		exce.ThrowSys(exce.CodeSysBusy, err.Error())
+	}
+
+	c := proto.NewUserCardClient(proto.GRPCConn)
+	_, err = c.UpAddress(context.Background(), &proto.UpdateUserCardReq{
+		UserID: UserID,
+		Body:   body,
+	})
+	if err != nil {
+		exce.ParseErr(err)
+	}
+}

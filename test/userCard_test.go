@@ -90,3 +90,29 @@ func TestUpdateUserCard(t *testing.T) {
 		})
 	}
 }
+
+func TestAddress(t *testing.T) {
+	// 监听端口
+	conn, err := grpc.Dial("127.0.0.1:9200", grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		fmt.Printf("连接服务失败失败: %s", err)
+		return
+	}
+	proto.GRPCConn = conn
+	type args struct {
+		UserID uint32
+		data   map[string]interface{}
+	}
+
+	res := userCard.GetAddressList(7)
+	fmt.Println(res)
+
+	userCard.UpAddress(7, []string{})
+
+	res = userCard.GetAddressList(7)
+	fmt.Println(res)
+
+	userCard.InstallAddress(7, "昆明4楼")
+	res = userCard.GetAddressList(7)
+	fmt.Println(res)
+}

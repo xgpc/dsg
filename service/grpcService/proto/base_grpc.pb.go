@@ -730,6 +730,12 @@ type UserCardClient interface {
 	GetUserCard(ctx context.Context, in *UserCardReq, opts ...grpc.CallOption) (*UserCardRes, error)
 	// 修改身份信息
 	UpdateUserCard(ctx context.Context, in *UpdateUserCardReq, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 获取地址
+	GetAddressList(ctx context.Context, in *UserCardReq, opts ...grpc.CallOption) (*UserCardRes, error)
+	// 更新地址
+	UpAddress(ctx context.Context, in *UpdateUserCardReq, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	// 插入地址
+	InstallAddress(ctx context.Context, in *UpdateUserCardReq, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type userCardClient struct {
@@ -758,6 +764,33 @@ func (c *userCardClient) UpdateUserCard(ctx context.Context, in *UpdateUserCardR
 	return out, nil
 }
 
+func (c *userCardClient) GetAddressList(ctx context.Context, in *UserCardReq, opts ...grpc.CallOption) (*UserCardRes, error) {
+	out := new(UserCardRes)
+	err := c.cc.Invoke(ctx, "/proto.UserCard/GetAddressList", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userCardClient) UpAddress(ctx context.Context, in *UpdateUserCardReq, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/proto.UserCard/UpAddress", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *userCardClient) InstallAddress(ctx context.Context, in *UpdateUserCardReq, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/proto.UserCard/InstallAddress", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UserCardServer is the server API for UserCard service.
 // All implementations must embed UnimplementedUserCardServer
 // for forward compatibility
@@ -766,6 +799,12 @@ type UserCardServer interface {
 	GetUserCard(context.Context, *UserCardReq) (*UserCardRes, error)
 	// 修改身份信息
 	UpdateUserCard(context.Context, *UpdateUserCardReq) (*emptypb.Empty, error)
+	// 获取地址
+	GetAddressList(context.Context, *UserCardReq) (*UserCardRes, error)
+	// 更新地址
+	UpAddress(context.Context, *UpdateUserCardReq) (*emptypb.Empty, error)
+	// 插入地址
+	InstallAddress(context.Context, *UpdateUserCardReq) (*emptypb.Empty, error)
 	mustEmbedUnimplementedUserCardServer()
 }
 
@@ -778,6 +817,15 @@ func (UnimplementedUserCardServer) GetUserCard(context.Context, *UserCardReq) (*
 }
 func (UnimplementedUserCardServer) UpdateUserCard(context.Context, *UpdateUserCardReq) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateUserCard not implemented")
+}
+func (UnimplementedUserCardServer) GetAddressList(context.Context, *UserCardReq) (*UserCardRes, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAddressList not implemented")
+}
+func (UnimplementedUserCardServer) UpAddress(context.Context, *UpdateUserCardReq) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpAddress not implemented")
+}
+func (UnimplementedUserCardServer) InstallAddress(context.Context, *UpdateUserCardReq) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method InstallAddress not implemented")
 }
 func (UnimplementedUserCardServer) mustEmbedUnimplementedUserCardServer() {}
 
@@ -828,6 +876,60 @@ func _UserCard_UpdateUserCard_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UserCard_GetAddressList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UserCardReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserCardServer).GetAddressList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.UserCard/GetAddressList",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserCardServer).GetAddressList(ctx, req.(*UserCardReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserCard_UpAddress_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateUserCardReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserCardServer).UpAddress(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.UserCard/UpAddress",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserCardServer).UpAddress(ctx, req.(*UpdateUserCardReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _UserCard_InstallAddress_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateUserCardReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UserCardServer).InstallAddress(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/proto.UserCard/InstallAddress",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UserCardServer).InstallAddress(ctx, req.(*UpdateUserCardReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // UserCard_ServiceDesc is the grpc.ServiceDesc for UserCard service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -842,6 +944,18 @@ var UserCard_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateUserCard",
 			Handler:    _UserCard_UpdateUserCard_Handler,
+		},
+		{
+			MethodName: "GetAddressList",
+			Handler:    _UserCard_GetAddressList_Handler,
+		},
+		{
+			MethodName: "UpAddress",
+			Handler:    _UserCard_UpAddress_Handler,
+		},
+		{
+			MethodName: "InstallAddress",
+			Handler:    _UserCard_InstallAddress_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

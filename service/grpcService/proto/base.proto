@@ -138,6 +138,15 @@ service UserCard {
   }
   // 修改身份信息
   rpc UpdateUserCard(UpdateUserCardReq) returns (google.protobuf.Empty){}
+
+  // 获取地址
+  rpc GetAddressList(UserCardReq) returns (UserCardRes){}
+
+  // 更新地址
+  rpc UpAddress(UpdateUserCardReq) returns (google.protobuf.Empty){}
+
+  // 插入地址
+  rpc InstallAddress(UpdateUserCardReq) returns (google.protobuf.Empty){}
 }
 
 message UserCardReq {
@@ -146,17 +155,18 @@ message UserCardReq {
 
 message UserCardRes {
   uint32 userID =1;
-  bool Gender   =2;
+  int32 Gender   =2;
   string RealName =3;
   string UserImage=4;
   string CardID   =5;
   string CardType =6;
-  uint32 StartAt  =7;
-  uint32 EndAt    =8;
-  string CardCode =9;
-  string AreaCode =10;
-  string Address  =11;
+  string CardCode =7;
+  string CardAddress =8;
+  uint32 StartAt  =9;
+  uint32 EndAt    =10;
+  string AreaCode =11;
   string Email    =12;
+  bytes Address  =13;
 }
 
 message UpdateUserCardReq {
