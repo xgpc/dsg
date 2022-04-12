@@ -13,7 +13,7 @@ import (
 	"github.com/xgpc/dsg/util/guzzle"
 )
 
-func Router(app *iris.Application) {
+func Router(app iris.Party) {
 
 	serviceConf := frame.Config.Microservices
 	uploadClient = guzzle.NewClient(guzzle.WithHost(serviceConf.FileAddr))

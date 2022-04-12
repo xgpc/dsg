@@ -27,4 +27,6 @@ func LoadRouter(app *iris.Application) {
 	api.Post("/category", category.CreateCategory)
 	api.Get("/", category.GetList)
 
+	fileService.Router(api)
+
 }
