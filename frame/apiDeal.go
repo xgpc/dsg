@@ -53,7 +53,7 @@ func (this *Base) InitAndBackParam(data interface{}) (param map[string]interface
 	param = make(map[string]interface{})
 	err := this.ctx.ReadJSON(&param)
 	if err != nil {
-		exce.ThrowSys(nil, exce.CodeRequestError, "参数格式错误")
+		exce.ThrowSys(nil, exce.CodeRequestError, err.Error())
 	}
 
 	// 请求参数
@@ -103,7 +103,7 @@ func (this *Base) ReplaceParamColumn(data, old interface{}, requestParam map[str
 func (this *Base) initParamPost(data interface{}) {
 	err := this.ctx.ReadJSON(&data)
 	if err != nil {
-		exce.ThrowSys(nil, exce.CodeRequestError, "参数格式错误")
+		exce.ThrowSys(nil, exce.CodeRequestError, err.Error())
 	}
 }
 
