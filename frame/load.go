@@ -20,7 +20,7 @@ func Listening(app *iris.Application) {
 	host := ":" + Config.App.Port
 	if Config.App.TLS != "" {
 		tlsPrefix := Config.App.TLS
-		_ = app.Run(iris.TLS(host, tlsPrefix+".crt", tlsPrefix+".key"))
+		_ = app.Run(iris.TLS(host, tlsPrefix+".pem", tlsPrefix+".key"))
 	} else {
 		_ = app.Run(iris.Addr(host))
 	}
