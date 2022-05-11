@@ -11,11 +11,6 @@ func Load(app *iris.Application, configPath string) {
 
 	// load config
 	LoadConf(configPath)
-
-	// 加载MySQL、Redis
-	loadMysql()
-	loadRedis()
-
 }
 
 // Listening 开始监听端口

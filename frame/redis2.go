@@ -11,7 +11,7 @@ var rDB *redis.Client
 func RedisDefault() *redis.Client {
 	return rDB
 }
-func loadRedis() {
+func LoadRedis() {
 	rDB = redisInit(Config.Redis)
 }
 
