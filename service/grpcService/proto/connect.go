@@ -11,7 +11,7 @@ var GRPCConn *grpc.ClientConn
 
 func GRPCConnect() {
 	// 监听端口
-	conn, err := grpc.Dial(frame.Config.App.RPCAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	conn, err := grpc.Dial(frame.Config.Microservices.RPCAddr, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		fmt.Printf("连接服务失败失败: %s", err)
 		return
