@@ -9,32 +9,76 @@ package dsg
 import (
 	"github.com/kataras/iris/v12"
 	"github.com/xgpc/dsg/frame"
-
-	service2 "github.com/xgpc/dsg/service"
+	"github.com/xgpc/dsg/models"
+	"github.com/xgpc/dsg/service/cryptService"
+	"github.com/xgpc/dsg/service/grpcService/proto"
+	"github.com/xgpc/dsg/service/schedule"
+	"github.com/xgpc/dsg/service/sysService"
+	"github.com/xgpc/dsg/service/validatorService"
+	path2 "path"
 )
 
-type service struct {
+type Service struct {
 	App *iris.Application
 }
 
-func New() *service {
+func New(paths ...string) *Service {
 	app := iris.New()
 
-	// 加载配置
-	frame.Load(app, "config.yaml")
+	path := path2.Join(paths...)
+	if path == "" {
+		path = "config.yaml"
+	}
 
-	// 中间件
-	//middleware.Load(app)
+	// 加载配置
+	frame.Load(app, path)
+
+	// 加载mysql
+	if frame.Config.Mysql.Host != "" {
+		frame.LoadMysql()
+	}
+
+	// 加载Redis
+	if frame.Config.Redis.Host != "" {
+		frame.LoadRedis()
+	}
 
 	// 加载服务
-	service2.LoadService()
+	if frame.Config.SysConfig.StartSchedule {
+		schedule.Start()
+		schedule.StartSchedules()
+	}
 
-	return &service{
+	// 参数验证器配置
+	if frame.Config.SysConfig.ValidatorService {
+		validatorService.GetTranslations()
+	}
+
+	//	系统时间版本
+	sysService.InitSysVersion()
+
+	//	默认user表
+	if frame.Config.SysConfig.UserDefault {
+		models.InitUser()
+	}
+
+	// rsa秘钥初始化
+	if frame.Config.SysConfig.GenerateRSAKey {
+		cryptService.GenerateRSAKey(1024)
+		cryptService.SetRsaKey()
+	}
+
+	// grpc连接初始化
+	if frame.Config.Microservices.RPCAddr != "" {
+		proto.GRPCConnect()
+	}
+
+	return &Service{
 		App: app,
 	}
 }
 
 // Start 启动监听
-func (app *service) Start() {
+func (app *Service) Start() {
 	frame.Listening(app.App)
 }

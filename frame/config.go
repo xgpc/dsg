@@ -44,13 +44,13 @@ type conf struct {
 
 type Microservices struct {
 	FileAddr string `yaml:"fileAddr"`
+	RPCAddr  string `yaml:"rpcAddr"`
 }
 
 type App struct {
 	AppName string `yaml:"appName"`
 	CnName  string `yaml:"cnName"`
 	Port    string `yaml:"port"`
-	RPCAddr string `yaml:"rpcAddr"`
 	SysCode uint32 `yaml:"sysCode"`
 	TLS     string `yaml:"tls"`
 }
@@ -86,6 +86,9 @@ type Wechat struct {
 // SysConfig 系统配置
 type SysConfig struct {
 	// 定时器
-	StartSchedule bool   `yaml:"startSchedule"`
-	LogLevel      string `yaml:"logLevel"`
+	StartSchedule    bool   `yaml:"startSchedule"`
+	LogLevel         string `yaml:"logLevel"`
+	ValidatorService bool   `yaml:"validatorService"`
+	UserDefault      bool   `yaml:"userDefault"`
+	GenerateRSAKey   bool   `yaml:"generateRSAKey"`
 }

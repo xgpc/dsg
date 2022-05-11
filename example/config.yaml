@@ -2,8 +2,7 @@ app:
   appName: server
   cnName:  xx服务
   port: 8080
-  #  rpc地址： 远程调用：地址+端口
-  rpcAddr:
+
   #  系统编码
   sysCode: 2
   #  https
@@ -31,8 +30,16 @@ sysConfig:
   startSchedule: false
 #  普通日志级别： "info","error"
   logLevel: error
+# 参数效验
+  validatorService: true
+# 是否开启默认user表
+  userDefault: false
+# 加密文件是否开启
+  generateRSAKey: false
 
 # 微服务接口地址
 microServices:
   # 文件服务地址 url
   fileAddr:
+  #  rpc地址： 远程调用：地址+端口
+  rpcAddr:

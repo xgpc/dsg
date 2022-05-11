@@ -16,7 +16,7 @@ func MySqlDefault() *gorm.DB {
 	return DB
 }
 
-func loadMysql() {
+func LoadMysql() {
 	DB = mysqlInit(Config.Mysql)
 }
 

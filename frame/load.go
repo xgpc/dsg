@@ -11,11 +11,6 @@ func Load(app *iris.Application, configPath string) {
 
 	// load config
 	LoadConf(configPath)
-
-	// 加载MySQL、Redis
-	loadMysql()
-	loadRedis()
-
 }
 
 // Listening 开始监听端口
@@ -25,7 +20,7 @@ func Listening(app *iris.Application) {
 	host := ":" + Config.App.Port
 	if Config.App.TLS != "" {
 		tlsPrefix := Config.App.TLS
-		_ = app.Run(iris.TLS(host, tlsPrefix+".crt", tlsPrefix+".key"))
+		_ = app.Run(iris.TLS(host, tlsPrefix+".pem", tlsPrefix+".key"))
 	} else {
 		_ = app.Run(iris.Addr(host))
 	}
