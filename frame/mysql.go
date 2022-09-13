@@ -20,11 +20,11 @@ func LoadMysql() {
 	DB = mysqlInit(Config.Mysql)
 }
 
-func mysqlInit(conf Mysql) *gorm.DB {
+func mysqlInit(conf DbInfo) *gorm.DB {
 	//连接
 	mysqlConfig := conf
 	var connStr bytes.Buffer
-	connStr.WriteString(mysqlConfig.User)
+	connStr.WriteString(mysqlConfig.UserName)
 	connStr.WriteString(":")
 	connStr.WriteString(mysqlConfig.Password)
 	connStr.WriteString("@(")

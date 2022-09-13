@@ -7,15 +7,15 @@
 package dsg
 
 import (
+	path2 "path"
+
 	"github.com/kataras/iris/v12"
 	"github.com/xgpc/dsg/frame"
-	"github.com/xgpc/dsg/models"
 	"github.com/xgpc/dsg/service/cryptService"
 	"github.com/xgpc/dsg/service/grpcService/proto"
 	"github.com/xgpc/dsg/service/schedule"
 	"github.com/xgpc/dsg/service/sysService"
 	"github.com/xgpc/dsg/service/validatorService"
-	path2 "path"
 )
 
 type Service struct {
@@ -27,7 +27,7 @@ func New(paths ...string) *Service {
 
 	path := path2.Join(paths...)
 	if path == "" {
-		path = "config.yaml"
+		path = "config.yml"
 	}
 
 	// 加载配置
@@ -56,11 +56,6 @@ func New(paths ...string) *Service {
 
 	//	系统时间版本
 	sysService.InitSysVersion()
-
-	//	默认user表
-	if frame.Config.SysConfig.UserDefault {
-		models.InitUser()
-	}
 
 	// rsa秘钥初始化
 	if frame.Config.SysConfig.GenerateRSAKey {

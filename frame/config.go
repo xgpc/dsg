@@ -34,7 +34,7 @@ func LoadConf(path ...string) {
 
 type conf struct {
 	App           App           `yaml:"app"`
-	Mysql         Mysql         `yaml:"mysql"`
+	Mysql         DbInfo        `yaml:"db_info"`
 	Redis         Redis         `yaml:"redis"`
 	Message       Message       `yaml:"message"`
 	Wechat        Wechat        `yaml:"wechat"`
@@ -63,11 +63,11 @@ type Redis struct {
 	MinIdleConn int    `yaml:"MinIdleConn"`
 }
 
-type Mysql struct {
+type DbInfo struct {
 	Host            string `yaml:"host"`
 	Port            string `yaml:"port"`
 	Database        string `yaml:"database"`
-	User            string `yaml:"user"`
+	UserName        string `yaml:"username"`
 	Password        string `yaml:"password"`
 	MaxIdleConn     int    `yaml:"maxIdleConn"`
 	MaxOpenConn     int    `yaml:"maxOpenConn"`
