@@ -15,7 +15,7 @@ import (
 	"path"
 )
 
-const defConfigPath = "config.yaml"
+const defConfigPath = "config.yml"
 
 // LoadConf 读取Yaml配置文件
 func LoadConf(out interface{}, fileName ...string) {
