@@ -11,3 +11,9 @@ type Response struct {
 	Msg  string
 	Data interface{}
 }
+
+type ResList struct {
+    List []interface{}
+    Total  int
+
+}
