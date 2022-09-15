@@ -105,7 +105,7 @@ func (this *Base) SuccessWithData(data interface{}) {
 	this.resp(res)
 }
 
-func (this *Base) SuccessWithList(list interface{}, total int64) {
+func (this *Base) SuccessWithList(list interface{}, total interface{}) {
 	if reflect.TypeOf(list).Kind() == reflect.Slice && reflect.ValueOf(list).Len() < 1 {
 		list = resEmptySlice
 	}
