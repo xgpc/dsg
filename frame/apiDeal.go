@@ -108,54 +108,10 @@ func (this *Base) initParamPost(data interface{}) {
 }
 
 func (this *Base) initParamGet(data interface{}) {
-	if this.ctx.Params().Len() == 0 {
-		return
-	}
-	val := reflect.ValueOf(data)
-	if val.Kind() == reflect.Interface || val.Kind() == reflect.Ptr {
-		val = val.Elem()
-	}
-	if val.Kind() != reflect.Struct {
-		panic(exce.CodeRequestError)
-	}
-
-	for i := 0; i < val.NumField(); i++ {
-		key := val.Type().Field(i).Name
-		keyType := val.Type().Field(i).Type.Kind()
-		switch keyType {
-		case reflect.String:
-			if this.ctx.Params().Exists(key) {
-				value := this.ctx.Params().Get(key)
-				val.Field(i).SetString(value)
-			}
-		case reflect.Uint32:
-			if this.ctx.Params().Exists(key) {
-				value, _ := this.ctx.Params().GetUint64(key)
-				val.Field(i).SetUint(value)
-			}
-		case reflect.Int:
-			if this.ctx.Params().Exists(key) {
-				value, _ := this.ctx.Params().GetInt64(key)
-				val.Field(i).SetInt(value)
-			}
-		case reflect.Bool:
-			if this.ctx.Params().Exists(key) {
-				value, _ := this.ctx.Params().GetBool(key)
-				val.Field(i).SetBool(value)
-			}
-		case reflect.Float64:
-			if this.ctx.Params().Exists(key) {
-				value, _ := this.ctx.Params().GetFloat64(key)
-				val.Field(i).SetFloat(value)
-			}
-		case reflect.Int64:
-			if this.ctx.Params().Exists(key) {
-				value, _ := this.ctx.Params().GetInt64(key)
-				val.Field(i).SetInt(value)
-			}
-		}
-
-	}
+    err := this.ctx.ReadQuery(data)
+    if err != nil {
+        exce.ThrowSys(exce.CodeRequestError, err.Error())
+    }
 }
 
 func (this *Base) Page() int {
