@@ -11,10 +11,29 @@ import (
 	"gorm.io/gorm"
 )
 
+
+
+// Paginate 分页
+func Page(page, pageSize int) func(db *gorm.DB) *gorm.DB {
+    return func(db *gorm.DB) *gorm.DB {
+        page := page
+        pageSize := pageSize
+        switch {
+        case pageSize > 100:
+            pageSize = 100
+        case pageSize <= 0:
+            pageSize = 10
+        }
+
+        offset := (page - 1) * pageSize
+        return db.Offset(offset).Limit(pageSize)
+    }
+}
+
 // Paginate 分页
 func Paginate(ctx iris.Context) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
-		page := ctx.Params().GetIntDefault("Page", 1)
+		page := ctx.Quer().GetIntDefault("Page", 1)
 
 		pageSize := ctx.Params().GetIntDefault("PageSize", 10)
 		switch {
