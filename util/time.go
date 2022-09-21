@@ -89,6 +89,17 @@ func BeijingTime() time.Time {
 	return time.Now()
 }
 
+func TimeDPeriod(timestamp int64) (start, end uint32) {
+	//time.Time格式
+	ts := time.Unix(timestamp, 0)
+	firstOfMonth := time.Date(ts.Year(), ts.Month(), ts.Day(), 0, 0, 0, 0, ts.Location())
+	last := time.Date(ts.Year(), ts.Month(), ts.Day(), 23, 59, 59, 0, ts.Location())
+	st := uint32(firstOfMonth.Unix())
+	et := uint32(last.Unix())
+
+	return st, et
+}
+
 // TimeMPeriod 月份时间区间
 func TimeMPeriod(timestamp int64) (start, end uint32) {
 	ts := time.Unix(timestamp, 0)
