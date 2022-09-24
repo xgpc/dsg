@@ -62,6 +62,10 @@ func (this *Base) Ctx() iris.Context {
 	return this.ctx
 }
 
+func (this *Base) SetMyId(id uint32) {
+	this.ctx.Values().Set("mid", id)
+}
+
 func (this *Base) MyId() uint32 {
 	id, err := this.ctx.Values().GetUint32("mid")
 	if err != nil {
