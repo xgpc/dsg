@@ -13,7 +13,6 @@ type Response struct {
 }
 
 type ResList struct {
-    List []interface{}
-    Total  int
-
+	List  []interface{}
+	Total int
 }

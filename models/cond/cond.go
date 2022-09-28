@@ -31,9 +31,9 @@ func Page(page, pageSize int) func(db *gorm.DB) *gorm.DB {
 // PagebyURL 分页
 func PagebyURL(ctx iris.Context) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
-		page := ctx.URLParamIntDefault("Page", 1)
+		page := ctx.URLParamIntDefault("page", 1)
 
-		pageSize := ctx.URLParamIntDefault("PageSize", 10)
+		pageSize := ctx.URLParamIntDefault("page_size", 10)
 		switch {
 		case pageSize > 100:
 			pageSize = 100
@@ -49,9 +49,9 @@ func PagebyURL(ctx iris.Context) func(db *gorm.DB) *gorm.DB {
 // PageByParams 分页
 func PageByParams(ctx iris.Context) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
-		page := ctx.Params().GetIntDefault("Page", 1)
+		page := ctx.Params().GetIntDefault("page", 1)
 
-		pageSize := ctx.Params().GetIntDefault("PageSize", 10)
+		pageSize := ctx.Params().GetIntDefault("page_size", 10)
 		switch {
 		case pageSize > 100:
 			pageSize = 100

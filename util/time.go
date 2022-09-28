@@ -62,6 +62,12 @@ func DayUint64(t *time.Time) (uint64, error) {
 	return StrToUint64(s)
 }
 
+func TimeStringToTime(at string) (time.Time, error) {
+
+	return time.Parse("20060102", at)
+
+}
+
 func GetMonth(t *time.Time) int {
 	return monthsMd[t.Month().String()]
 }
