@@ -8,6 +8,7 @@ import (
 	"github.com/xgpc/dsg/service/cryptService"
 	"gorm.io/gorm"
 	"reflect"
+	"strconv"
 	"time"
 )
 
@@ -72,6 +73,14 @@ func (this *Base) MyId() uint32 {
 		exce.ThrowSys(exce.CodeUserNoAuth, err.Error())
 	}
 	return id
+}
+
+func (this *Base) MyIdToString() string {
+	id, err := this.ctx.Values().GetUint32("mid")
+	if err != nil {
+		exce.ThrowSys(exce.CodeUserNoAuth, err.Error())
+	}
+	return strconv.Itoa(int(id))
 }
 
 func (this *Base) Token() (token string) {

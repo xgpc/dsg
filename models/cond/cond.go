@@ -29,7 +29,7 @@ func Page(page, pageSize int) func(db *gorm.DB) *gorm.DB {
 }
 
 // PagebyURL 分页
-func PagebyURL(ctx iris.Context) func(db *gorm.DB) *gorm.DB {
+func PageByQuery(ctx iris.Context) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		page := ctx.URLParamIntDefault("page", 1)
 

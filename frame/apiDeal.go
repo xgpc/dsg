@@ -34,7 +34,6 @@ func (this *Base) Init(data interface{}) {
 		this.initParamGet(data)
 	default:
 		this.initParamPost(data)
-		this.initParamGet(data)
 	}
 	this.ValidateParam(data)
 }
@@ -108,20 +107,20 @@ func (this *Base) initParamPost(data interface{}) {
 }
 
 func (this *Base) initParamGet(data interface{}) {
-    err := this.ctx.ReadQuery(data)
-    if err != nil {
-        exce.ThrowSys(exce.CodeRequestError, err.Error())
-    }
+	err := this.ctx.ReadQuery(data)
+	if err != nil {
+		exce.ThrowSys(exce.CodeRequestError, err.Error())
+	}
 }
 
-func (this *Base) Page() int {
-	return this.ctx.Params().GetIntDefault("Page", 1)
+func (this *Base) Page() int64 {
+	return this.ctx.URLParamInt64Default("page", 1)
 }
 
-func (this *Base) PageSize() int {
-	return this.ctx.Params().GetIntDefault("PageSize", 10)
+func (this *Base) PageSize() int64 {
+	return this.ctx.URLParamInt64Default("page_size", 10)
 }
 
-func (this *Base) Skip() int {
+func (this *Base) Skip() int64 {
 	return (this.Page() - 1) * this.PageSize()
 }

@@ -51,7 +51,7 @@ func (this *UploadController) PostConfig() {
 	if res.Code != 0 {
 		exce.ThrowSys(exce.CodeRequestError, res.Msg)
 	}
-	this.Frame.SuccessWithData(res.Data)
+	this.Base.SuccessWithData(res.Data)
 }
 
 type PostOssUpload struct {
@@ -71,7 +71,7 @@ type PostOssUpload struct {
 // @Router       /api/server/oss/upload [post]
 func (this *UploadController) PostOssUpload() {
 	param := &PostOssUpload{}
-	this.Frame.Init(param)
+	this.Base.Init(param)
 
 	resp, err := uploadClient.RequestJSON(map[string]interface{}{
 		"ProjectName": param.ProjectName,
@@ -87,7 +87,7 @@ func (this *UploadController) PostOssUpload() {
 	if res.Code != 0 {
 		exce.ThrowSys(exce.CodeRequestError, res.Msg)
 	}
-	this.Frame.SuccessWithData(res.Data)
+	this.Base.SuccessWithData(res.Data)
 }
 
 type PostOssConfirm struct {
@@ -106,7 +106,7 @@ type PostOssConfirm struct {
 // @Router       /api/server/oss/confirm [post]
 func (this *UploadController) PostOssConfirm() {
 	param := &PostOssConfirm{}
-	this.Frame.Init(param)
+	this.Base.Init(param)
 
 	resp, err := uploadClient.RequestJSON(map[string]interface{}{
 		"Key":        param.Key,
@@ -121,7 +121,7 @@ func (this *UploadController) PostOssConfirm() {
 	if res.Code != 0 {
 		exce.ThrowSys(exce.CodeRequestError, res.Msg)
 	}
-	this.Frame.SuccessWithData(res.Data)
+	this.Base.SuccessWithData(res.Data)
 }
 
 type PostOssKey struct {
@@ -139,11 +139,11 @@ type PostOssKey struct {
 // @Router       /api/server/oss/delete [post]
 func (this *UploadController) PostOssDelete() {
 	param := &PostOssKey{}
-	this.Frame.Init(param)
+	this.Base.Init(param)
 
 	resp, err := uploadClient.RequestJSON(map[string]interface{}{
 		"Key":    param.Key,
-		"UserID": this.Frame.MyId(),
+		"UserID": this.Base.MyId(),
 	}).Post("/server/oss/delete")
 	if err != nil {
 		exce.ThrowSys(exce.CodeRequestError, err.Error())
@@ -154,7 +154,7 @@ func (this *UploadController) PostOssDelete() {
 	if res.Code != 0 {
 		exce.ThrowSys(exce.CodeRequestError, res.Msg)
 	}
-	this.Frame.SuccessWithData(res.Data)
+	this.Base.SuccessWithData(res.Data)
 }
 
 // OssExist 查看是否存在
@@ -168,7 +168,7 @@ func (this *UploadController) PostOssDelete() {
 // @Router       /api/server/oss/isExist [post]
 func (this *UploadController) OssExist() {
 	param := &PostOssKey{}
-	this.Frame.Init(param)
+	this.Base.Init(param)
 
 	resp, err := uploadClient.RequestJSON(map[string]interface{}{
 		"Key": param.Key,
@@ -182,5 +182,5 @@ func (this *UploadController) OssExist() {
 	if res.Code != 0 {
 		exce.ThrowSys(exce.CodeRequestError, res.Msg)
 	}
-	this.Frame.SuccessWithData(res.Data)
+	this.Base.SuccessWithData(res.Data)
 }
