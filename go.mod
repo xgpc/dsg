@@ -1,10 +1,9 @@
 module github.com/xgpc/dsg
 
-go 1.17
+go 1.18
 
 require (
 	github.com/axgle/mahonia v0.0.0-20180208002826-3358181d7394
-	github.com/enjoy322/ormtool v1.1.0
 	github.com/go-playground/locales v0.14.0
 	github.com/go-playground/universal-translator v0.18.0
 	github.com/go-playground/validator/v10 v10.9.0

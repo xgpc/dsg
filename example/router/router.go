@@ -23,7 +23,7 @@ func LoadRouter(app *iris.Application) {
 	app.Get("/swagger", swaggerUI)
 
 	api := app.Party("/api")
-	Sys(api)
+
 	api.Post("/category", category.CreateCategory)
 	api.Get("/", category.GetList)
 
