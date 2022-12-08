@@ -22,3 +22,12 @@ func StructToMapByRef(obj interface{}) (data map[string]interface{}) {
 	}
 	return
 }
+
+// ToMapByJson 通过json转为map
+func ToMapByJson(obj interface{}) (data map[string]interface{}) {
+	marshal, _ := JsonEncode(obj)
+	data = make(map[string]interface{})
+	JsonDecode(marshal, &data)
+
+	return data
+}
