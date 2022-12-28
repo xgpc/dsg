@@ -9,15 +9,15 @@ package fileService
 import (
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/mvc"
+	"github.com/xgpc/dsg"
 	"github.com/xgpc/dsg/exce"
-	"github.com/xgpc/dsg/frame"
 	"github.com/xgpc/dsg/util/guzzle"
 	"net/http"
 )
 
 type UploadController struct {
-	Frame *frame.Base
-	Ctx   iris.Context
+	Base *dsg.Base
+	Ctx  iris.Context
 }
 
 type Response struct {

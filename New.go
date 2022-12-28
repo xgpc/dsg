@@ -7,10 +7,10 @@
 package dsg
 
 import (
+	"github.com/xgpc/dsg/env"
 	path2 "path"
 
 	"github.com/kataras/iris/v12"
-	"github.com/xgpc/dsg/frame"
 	"github.com/xgpc/dsg/service/cryptService"
 	"github.com/xgpc/dsg/service/grpcService/proto"
 	"github.com/xgpc/dsg/service/schedule"
@@ -31,26 +31,26 @@ func New(paths ...string) *Service {
 	}
 
 	// 加载配置
-	frame.Load(app, path)
+	Load(app, path)
 
 	// 加载mysql
-	if frame.Config.Mysql.Host != "" {
-		frame.LoadMysql()
+	if env.Config.Mysql.Host != "" {
+		LoadMysql()
 	}
 
 	// 加载Redis
-	if frame.Config.Redis.Host != "" {
-		frame.LoadRedis()
+	if env.Config.Redis.Host != "" {
+		LoadRedisDefault()
 	}
 
 	// 加载服务
-	if frame.Config.SysConfig.StartSchedule {
+	if env.Config.SysConfig.StartSchedule {
 		schedule.Start()
 		schedule.StartSchedules()
 	}
 
 	// 参数验证器配置
-	if frame.Config.SysConfig.ValidatorService {
+	if env.Config.SysConfig.ValidatorService {
 		validatorService.GetTranslations()
 	}
 
@@ -58,13 +58,13 @@ func New(paths ...string) *Service {
 	sysService.InitSysVersion()
 
 	// rsa秘钥初始化
-	if frame.Config.SysConfig.GenerateRSAKey {
+	if env.Config.SysConfig.GenerateRSAKey {
 		cryptService.GenerateRSAKey(1024)
 		cryptService.SetRsaKey()
 	}
 
 	// grpc连接初始化
-	if frame.Config.Microservices.RPCAddr != "" {
+	if env.Config.Microservices.RPCAddr != "" {
 		proto.GRPCConnect()
 	}
 
@@ -75,5 +75,5 @@ func New(paths ...string) *Service {
 
 // Start 启动监听
 func (app *Service) Start() {
-	frame.Listening(app.App)
+	Listening(app.App)
 }

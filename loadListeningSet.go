@@ -1,4 +1,4 @@
-package frame
+package dsg
 
 import (
 	"github.com/kataras/iris/v12"

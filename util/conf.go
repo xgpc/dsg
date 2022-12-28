@@ -6,7 +6,7 @@
  * @Date: 2022/6/30 9:16
  */
 
-package conf
+package util
 
 import (
 	"fmt"
@@ -17,8 +17,8 @@ import (
 
 const defConfigPath = "config.yml"
 
-// LoadConf 读取Yaml配置文件
-func LoadConf(out interface{}, fileName ...string) {
+// LoadYmlConf 读取Yaml配置文件
+func LoadYmlConf(out interface{}, fileName ...string) {
 
 	var configPath string
 	if len(fileName) == 0 {

@@ -2,7 +2,7 @@ package category
 
 import (
 	"github.com/kataras/iris/v12"
-	"github.com/xgpc/dsg/frame"
+	"github.com/xgpc/dsg"
 )
 
 // CategoryControllerPost 创建分类
@@ -26,7 +26,7 @@ type CreateCategoryRequest struct {
 func CreateCategory(ctx iris.Context) {
 	param := &CreateCategoryRequest{}
 
-	this := frame.NewBase(ctx)
+	this := dsg.NewBase(ctx)
 	this.Init(param)
 }
 

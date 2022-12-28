@@ -1,4 +1,4 @@
-package frame
+package env
 
 import (
 	"fmt"
@@ -8,7 +8,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-var Config conf
+var Config Conf
 
 const defConfigPath = "config.yaml"
 
@@ -32,7 +32,7 @@ func LoadConf(path ...string) {
 	}
 }
 
-type conf struct {
+type Conf struct {
 	App           App           `yaml:"app"`
 	Mysql         DbInfo        `yaml:"db_info"`
 	Redis         Redis         `yaml:"redis"`

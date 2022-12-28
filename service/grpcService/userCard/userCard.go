@@ -10,7 +10,7 @@ import (
 	"context"
 	"github.com/xgpc/dsg/exce"
 	"github.com/xgpc/dsg/service/grpcService/proto"
-	"github.com/xgpc/util"
+	"github.com/xgpc/dsg/util"
 )
 
 func GetUserCard(UserID uint32) *proto.UserCardRes {

@@ -9,7 +9,7 @@ package validatorService
 import (
 	"regexp"
 
-	"github.com/xgpc/util"
+	"github.com/xgpc/dsg/util"
 
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"

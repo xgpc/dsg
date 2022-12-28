@@ -1,8 +1,7 @@
-package frame
+package dsg
 
 import (
 	"encoding/base64"
-	"github.com/go-redis/redis/v8"
 	"github.com/kataras/iris/v12"
 	"github.com/xgpc/dsg/exce"
 	"github.com/xgpc/dsg/service/cryptService"
@@ -59,38 +58,38 @@ type UpBase struct {
 	param map[string]interface{}
 }
 
-func (this *Base) Ctx() iris.Context {
-	return this.ctx
+func (p *Base) Ctx() iris.Context {
+	return p.ctx
 }
 
-func (this *Base) SetMyId(id uint32) {
-	this.ctx.Values().Set("mid", id)
+func (p *Base) SetMyId(id uint32) {
+	p.ctx.Values().Set("mid", id)
 }
 
-func (this *Base) MyId() uint32 {
-	id, err := this.ctx.Values().GetUint32("mid")
+func (p *Base) MyId() uint32 {
+	id, err := p.ctx.Values().GetUint32("mid")
 	if err != nil {
 		exce.ThrowSys(exce.CodeUserNoAuth, err.Error())
 	}
 	return id
 }
 
-func (this *Base) MyIdToString() string {
-	id, err := this.ctx.Values().GetUint32("mid")
+func (p *Base) MyIdToString() string {
+	id, err := p.ctx.Values().GetUint32("mid")
 	if err != nil {
 		exce.ThrowSys(exce.CodeUserNoAuth, err.Error())
 	}
 	return strconv.Itoa(int(id))
 }
 
-func (this *Base) Token() (token string) {
-	token = this.ctx.GetHeader("Token")
+func (p *Base) Token() (token string) {
+	token = p.ctx.GetHeader("Token")
 	return
 }
 
 // Key 从header中获取前端公钥
-func (this *Base) Key() (rsa []byte) {
-	s := this.ctx.GetHeader("Key")
+func (p *Base) Key() (rsa []byte) {
+	s := p.ctx.GetHeader("Key")
 	if s == "" {
 		exce.ThrowSys(exce.CodeRequestError, "需要携带秘钥访问")
 	}
@@ -101,24 +100,24 @@ func (this *Base) Key() (rsa []byte) {
 	return
 }
 
-func (this *Base) Success() {
-	this.resp(map[string]interface{}{
+func (p *Base) Success() {
+	p.resp(map[string]interface{}{
 		"code": CodeSuccess,
 		"msg":  "ok",
 	})
 }
 
-func (this *Base) SuccessWithData(data interface{}) {
+func (p *Base) SuccessWithData(data interface{}) {
 	var res = &ResJson{Code: CodeSuccess, Msg: "ok"}
 	if data == nil {
 		res.Data = resEmptySlice
 	} else {
 		res.Data = data
 	}
-	this.resp(res)
+	p.resp(res)
 }
 
-func (this *Base) SuccessWithList(list interface{}, total interface{}) {
+func (p *Base) SuccessWithList(list interface{}, total interface{}) {
 	if reflect.TypeOf(list).Kind() == reflect.Slice && reflect.ValueOf(list).Len() < 1 {
 		list = resEmptySlice
 	}
@@ -128,11 +127,11 @@ func (this *Base) SuccessWithList(list interface{}, total interface{}) {
 			"list":  list,
 		},
 	}
-	this.resp(res)
+	p.resp(res)
 }
 
-func (this *Base) resp(data interface{}) {
-	_, err := this.ctx.JSON(data)
+func (p *Base) resp(data interface{}) {
+	err := p.Ctx().JSON(data)
 	if err != nil {
 		panic(err)
 		return
@@ -140,20 +139,20 @@ func (this *Base) resp(data interface{}) {
 	return
 }
 
-func (this *Base) CancelMustJsonParam() {
-	this.isMustJsonParam = false
+func (p *Base) CancelMustJsonParam() {
+	p.isMustJsonParam = false
 }
 
 // DB 默认
-func (this *Base) DB() *gorm.DB {
+func (p *Base) DB() *gorm.DB {
 	return MySqlDefault()
 }
-func (this *Base) Redis() *redis.Client {
+func (p *Base) Redis() *RedisDsg {
 	return RedisDefault()
 }
 
 // CryptSend 加密：后端--->前端
-func (this *Base) CryptSend(data []byte) {
+func (p *Base) CryptSend(data []byte) {
 	AesKey, err := cryptService.GenKeyByte(16)
 	if err != nil {
 		exce.ThrowSys(err)
@@ -167,9 +166,9 @@ func (this *Base) CryptSend(data []byte) {
 		exce.ThrowSys(err)
 	}
 	//对AES秘钥加密
-	rsaEncrypt := cryptService.RSAEncrypt(AesKey, this.Key())
+	rsaEncrypt := cryptService.RSAEncrypt(AesKey, p.Key())
 
-	this.SuccessWithData(map[string]interface{}{
+	p.SuccessWithData(map[string]interface{}{
 		"key":  rsaEncrypt,
 		"tag":  iv,
 		"data": encrypted,
@@ -178,7 +177,7 @@ func (this *Base) CryptSend(data []byte) {
 }
 
 // CryptReceive 加密：后端--->前端
-func (this *Base) CryptReceive() []byte {
+func (p *Base) CryptReceive() []byte {
 	var param struct {
 		// RSA公钥加密AES后的密文
 		Key []byte `validate:"required"`
@@ -187,7 +186,7 @@ func (this *Base) CryptReceive() []byte {
 		// AES加密数据后的密文
 		Data []byte `validate:"required"`
 	}
-	this.Init(&param)
+	p.Init(&param)
 
 	//------>
 	// 使用RSA私钥解出AES秘钥

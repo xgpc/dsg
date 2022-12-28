@@ -1,4 +1,4 @@
-package frame
+package dsg
 
 import (
 	"encoding/json"
@@ -8,9 +8,7 @@ import (
 )
 
 const (
-	ResponseTypeJson = 1
-	ResponseTypeXml  = 3
-	CodeSuccess      = 0
+	CodeSuccess = 0
 )
 
 var (
@@ -26,20 +24,20 @@ type ResJson struct {
 func init() {
 	resEmptySlice = make([]interface{}, 0)
 }
-func (this *Base) Init(data interface{}) {
+func (p *Base) Init(data interface{}) {
 
 	// 请求参数
-	switch this.ctx.Method() {
+	switch p.ctx.Method() {
 	case "GET":
-		this.initParamGet(data)
+		p.initParamGet(data)
 	default:
-		this.initParamPost(data)
+		p.initParamPost(data)
 	}
-	this.ValidateParam(data)
+	p.ValidateParam(data)
 }
 
 // ValidateParam 参数校验
-func (this *Base) ValidateParam(data interface{}) {
+func (p *Base) ValidateParam(data interface{}) {
 	// 加载验证参数
 	err := validatorService.GetTranslations().ValidateParam(data)
 	if err != nil {
@@ -48,17 +46,17 @@ func (this *Base) ValidateParam(data interface{}) {
 }
 
 // InitAndBackParam Init返回前端传回的参数
-func (this *Base) InitAndBackParam(data interface{}) (param map[string]interface{}) {
+func (p *Base) InitAndBackParam(data interface{}) (param map[string]interface{}) {
 	param = make(map[string]interface{})
-	err := this.ctx.ReadJSON(&param)
+	err := p.ctx.ReadJSON(&param)
 	if err != nil {
 		exce.ThrowSys(exce.CodeRequestError, err.Error())
 	}
 
 	// 请求参数
-	switch this.ctx.Method() {
+	switch p.ctx.Method() {
 	case "GET", "PUT", "DELETE":
-		this.initParamGet(data)
+		p.initParamGet(data)
 	}
 
 	marshal, err := json.Marshal(param)
@@ -69,11 +67,11 @@ func (this *Base) InitAndBackParam(data interface{}) (param map[string]interface
 	if err != nil {
 		exce.ThrowSys(err)
 	}
-	this.ValidateParam(data)
+	p.ValidateParam(data)
 	return
 }
 
-func (this *Base) ReplaceParamColumn(data, old interface{}, requestParam map[string]interface{}) map[string]interface{} {
+func (p *Base) ReplaceParamColumn(data, old interface{}, requestParam map[string]interface{}) map[string]interface{} {
 	columnName := reflect.TypeOf(data)
 	columnValue := reflect.ValueOf(data)
 	finalParam := make(map[string]interface{})
@@ -99,28 +97,28 @@ func (this *Base) ReplaceParamColumn(data, old interface{}, requestParam map[str
 	return finalParam
 }
 
-func (this *Base) initParamPost(data interface{}) {
-	err := this.ctx.ReadJSON(&data)
+func (p *Base) initParamPost(data interface{}) {
+	err := p.ctx.ReadJSON(&data)
 	if err != nil {
 		exce.ThrowSys(exce.CodeRequestError, err.Error())
 	}
 }
 
-func (this *Base) initParamGet(data interface{}) {
-	err := this.ctx.ReadQuery(data)
+func (p *Base) initParamGet(data interface{}) {
+	err := p.ctx.ReadQuery(data)
 	if err != nil {
 		exce.ThrowSys(exce.CodeRequestError, err.Error())
 	}
 }
 
-func (this *Base) Page() int64 {
-	return this.ctx.URLParamInt64Default("page", 1)
+func (p *Base) Page() int64 {
+	return p.ctx.URLParamInt64Default("page", 1)
 }
 
-func (this *Base) PageSize() int64 {
-	return this.ctx.URLParamInt64Default("page_size", 10)
+func (p *Base) PageSize() int64 {
+	return p.ctx.URLParamInt64Default("page_size", 10)
 }
 
-func (this *Base) Skip() int64 {
-	return (this.Page() - 1) * this.PageSize()
+func (p *Base) Skip() int64 {
+	return (p.Page() - 1) * p.PageSize()
 }

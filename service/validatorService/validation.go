@@ -3,7 +3,7 @@ package validatorService
 import (
 	"sync"
 
-	"github.com/xgpc/util"
+	"github.com/xgpc/dsg/util"
 )
 
 var (

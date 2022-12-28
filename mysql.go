@@ -1,7 +1,8 @@
-package frame
+package dsg
 
 import (
 	"bytes"
+	"github.com/xgpc/dsg/env"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -17,10 +18,10 @@ func MySqlDefault() *gorm.DB {
 }
 
 func LoadMysql() {
-	DB = mysqlInit(Config.Mysql)
+	DB = mysqlInit(env.Config.Mysql)
 }
 
-func mysqlInit(conf DbInfo) *gorm.DB {
+func mysqlInit(conf env.DbInfo) *gorm.DB {
 	//连接
 	mysqlConfig := conf
 	var connStr bytes.Buffer

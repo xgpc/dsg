@@ -97,7 +97,7 @@ func DealException(ctx iris.Context, err interface{}) {
 	switch err.(type) {
 	case SysException:
 		sysErr := err.(SysException)
-		_, err := ctx.JSON(map[string]interface{}{"code": sysErr.Code, "msg": sysErr.Msg})
+		err := ctx.JSON(map[string]interface{}{"code": sysErr.Code, "msg": sysErr.Msg})
 		if err != nil {
 			return
 		}
@@ -114,7 +114,7 @@ func ExceptionCode(ctx iris.Context, t interface{}) {
 			"code": CodeSysBusy.Code(),
 			"msg":  CodeSysBusy.Error(),
 		}
-		_, err := ctx.JSON(res)
+		err := ctx.JSON(res)
 		if err != nil {
 			return
 		}

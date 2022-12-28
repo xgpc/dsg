@@ -1,7 +1,8 @@
-package frame
+package dsg
 
 import (
 	"encoding/json"
+	"github.com/xgpc/dsg/env"
 	"github.com/xgpc/dsg/exce"
 	"reflect"
 )
@@ -11,9 +12,6 @@ type ErrorLevel int
 const (
 	LogLevelInfo ErrorLevel = 1 + iota
 	LogLevelError
-	LogDriverConsole
-	LogDriverLocal
-	LogDriverServer
 )
 
 var ErrLevel = map[ErrorLevel]string{
@@ -30,7 +28,7 @@ func LogError(msg string, data interface{}) {
 }
 
 func logHandle(level ErrorLevel, msg string, data *interface{}) {
-	sysLogLevel := Config.SysConfig.LogLevel
+	sysLogLevel := env.Config.SysConfig.LogLevel
 	if sysLogLevel == ErrLevel[level] || level == LogLevelError {
 		exce.Write("[" + ErrLevel[level] + "] " + msg + ":" + dealCon(data) + "\n")
 	}
