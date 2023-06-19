@@ -2,6 +2,8 @@ package env
 
 import (
 	"fmt"
+	"github.com/xgpc/dsg/pkg/mysql"
+	"github.com/xgpc/dsg/pkg/redis"
 	"io/ioutil"
 	path2 "path"
 
@@ -33,13 +35,12 @@ func LoadConf(path ...string) {
 }
 
 type Conf struct {
-	App           App           `yaml:"app"`
-	Mysql         DbInfo        `yaml:"db_info"`
-	Redis         Redis         `yaml:"redis"`
-	Message       Message       `yaml:"message"`
-	Wechat        Wechat        `yaml:"wechat"`
-	SysConfig     SysConfig     `yaml:"sysConfig"`
-	Microservices Microservices `yaml:"microServices"`
+	App           *App           `yaml:"app"`
+	Mysql         *mysql.DBInfo  `yaml:"db_info"`
+	Redis         *redis.Config  `yaml:"redis"`
+	Message       *Message       `yaml:"message"`
+	Wechat        *Wechat        `yaml:"wechat"`
+	Microservices *Microservices `yaml:"microServices"`
 }
 
 type Microservices struct {
@@ -54,26 +55,7 @@ type App struct {
 	SysCode uint32 `yaml:"sysCode"`
 	TLS     string `yaml:"tls"`
 }
-type Redis struct {
-	Host        string `yaml:"host"`
-	Port        string `yaml:"port"`
-	Db          int    `yaml:"db"`
-	Password    string `yaml:"password"`
-	PoolSize    int    `yaml:"poolSize"`
-	MinIdleConn int    `yaml:"MinIdleConn"`
-}
 
-type DbInfo struct {
-	Host            string `yaml:"host"`
-	Port            string `yaml:"port"`
-	Database        string `yaml:"database"`
-	UserName        string `yaml:"username"`
-	Password        string `yaml:"password"`
-	MaxIdleConn     int    `yaml:"maxIdleConn"`
-	MaxOpenConn     int    `yaml:"maxOpenConn"`
-	ConnMaxIdleTime int    `yaml:"connMaxIdleTime"`
-	ConnMaxLifetime int    `yaml:"connMaxLifetime"`
-}
 type Message struct {
 	AccessKeyId     string
 	AccessKeySecret string
@@ -81,14 +63,4 @@ type Message struct {
 
 type Wechat struct {
 	AppID string `yaml:"appID"`
-}
-
-// SysConfig 系统配置
-type SysConfig struct {
-	// 定时器
-	StartSchedule    bool   `yaml:"startSchedule"`
-	LogLevel         string `yaml:"logLevel"`
-	ValidatorService bool   `yaml:"validatorService"`
-	UserDefault      bool   `yaml:"userDefault"`
-	GenerateRSAKey   bool   `yaml:"generateRSAKey"`
 }

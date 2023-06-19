@@ -3,16 +3,13 @@ package dsg
 import (
 	"github.com/kataras/iris/v12"
 	"github.com/xgpc/dsg/env"
-	"github.com/xgpc/dsg/util"
+	"github.com/xgpc/dsg/pkg/util"
 	"log"
 )
 
-func Load(app *iris.Application, configPath string) {
-	// 设置请求日志和常见HTTP错误码处理
-	loadListeningSet(app)
-
+func Load(conf *env.Conf, configPath string) {
 	// load config
-	util.LoadYmlConf(configPath)
+	util.LoadYmlConf(conf, configPath)
 }
 
 // Listening 开始监听端口
