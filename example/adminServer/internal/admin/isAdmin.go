@@ -11,11 +11,8 @@ package admin
 import "github.com/xgpc/dsg/exce"
 
 func IsAdmin(userID, subjectID uint32) bool {
-	info := getUser(userID, subjectID)
-	if info.UserID != 0 {
-		return true
-	}
-	return false
+	info := GetUser(userID, subjectID)
+	return info.IsAdmin
 }
 
 func CheckAdmin(userID, subjectID uint32) {

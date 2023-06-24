@@ -9,10 +9,10 @@
 package apps
 
 import (
-	"company/admin/pkg"
 	"company/admin/services/user"
 	"github.com/kataras/iris/v12"
 	"github.com/xgpc/dsg/exce"
+	"github.com/xgpc/dsg/pkg"
 	"github.com/xgpc/dsg/util"
 	"strconv"
 )
@@ -61,13 +61,6 @@ func SetSession(ctx iris.Context, data user.SessionData) {
 }
 
 func GetSession(key string, ctx iris.Context) SessionData {
-	//data := session.Get(key)
-	//
-	//var info SessionData
-	//err := util.JsonDecode([]byte(data.(string)), &info)
-	//if err != nil {
-	//    exce.ThrowSys(exce.CodeSysBusy, "解析sessionData出错")
-	//}
 
 	token, err := pkg.ParseToken(key)
 	if err != nil {

@@ -11,11 +11,8 @@ package admin
 import "github.com/xgpc/dsg/exce"
 
 func IsSuper(userID, subjectID uint32) bool {
-	info := getUser(userID, subjectID)
-	if info.IsSuper == 1 {
-		return true
-	}
-	return false
+	info := GetUser(userID, subjectID)
+	return info.IsSuper
 }
 
 func CheckSuper(userID, subjectID uint32) {

@@ -1,6 +1,7 @@
 package util
 
 import (
+	"github.com/xgpc/dsg/pkg/json"
 	"reflect"
 	"sort"
 )
@@ -71,7 +72,7 @@ func ReflectToApiSignData(p interface{}) (res []string) {
 			}
 		default:
 
-			str, err := JsonEncode(vv)
+			str, err := json.Encode(vv)
 			if err != nil {
 				panic(err)
 			}

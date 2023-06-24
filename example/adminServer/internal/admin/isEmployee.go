@@ -3,11 +3,8 @@ package admin
 import "github.com/xgpc/dsg/exce"
 
 func IsEmployee(userID, subjectID uint32) bool {
-	info := getUser(userID, subjectID)
-	if info.UserID != 0 {
-		return true
-	}
-	return false
+	info := GetUser(userID, subjectID)
+	return info.UserID != 0
 }
 
 func CheckEmployee(userID, subjectID uint32) {
