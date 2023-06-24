@@ -1,0 +1,101 @@
+app:
+  appName: gov
+  cnName: 政务服务
+  port:
+  # 系统编码
+  sysCode: 8082
+  #  https
+#  tls: xxxxxxxxxx
+
+# 微服务
+micro:
+  root_host: http://127.0.0.1:8082/app/handle
+  port:
+  host_type: client                 # 启动类型
+  router_app_name: gov          #服务名称
+  ip_address: 127.0.0.1               #服务器地址
+
+# mydb 加密key
+secret: xxxxxxxxx
+
+# 系统配置
+sysConfig:
+  #  定时器： true,false
+  startSchedule: false
+  #  普通日志级别： "info","error"
+  logLevel: error
+  # 参数效验
+  valIDatorService: true
+  # 是否开启默认user表
+  userDefault: false
+  # 加密文件是否开启
+  generateRSAKey: false
+
+redis:
+  host: 127.0.0.1
+  port: 6379
+  db: 0
+  password:
+  poolSize: 20
+  MinIDleConns: 5
+
+
+## 支付
+wechatPay:
+  appID: xxx
+  mchid: xxx
+  mchKey: xxx
+  notifyUrl: xxx
+  mchCertificateSerialNumber: xxx
+  mchAPIv3Key: xxx
+  mchPrivateKeyPath: xxx
+
+## 短信服务
+ali_msg:
+  access_key_id: xxx
+  access_key_secret: xxx
+
+
+base:
+  is_dev : false
+out_dir : ./models  # 输出目录
+url_tag : json # web url tag(json,db(https://github.com/google/go-querystring))
+language :  # 语言(English,中 文)
+#db_tag : gorm # 数据库标签名(gorm,db)
+simple : true # 简单输出(默认只输出gorm主键和字段标签)
+user_gorm_model : false # model是否使用gorm.Model
+is_db_tag : false # 是否输出 数据库标签(gorm,db)
+is_out_sql : true # 是否输出 sql 原信息
+is_out_func : false # 是否输出 快捷函数
+is_web_tag : true # 是否打web标记(json标记前提条件)
+is_web_tag_pk_hIDden: false # web标记是否隐藏主键
+is_foreign_key : false # 是否导出外键关联
+is_gui : false # 是否ui模式显示
+is_table_name : true # 是否直接生成表名
+is_column_name : true # 是否直接生成列名
+is_null_to_point : false # 数据库默认 'DEFAULT NULL' 时设置结构为指针类型
+is_null_to_sql_null: false # 数据库默认 'DEFAULT NULL' 时设置结构为sql.NULL  is_null_to_point如果为true，则is_null_to_sql_null不生效
+table_prefix : "" # 表前缀, 如果有则使用, 没有留空(如果表前缀以"-"开头，则表示去掉该前缀，struct、文件名都会去掉该前缀)
+table_names: "" # 指定表生成，多个表用,隔开
+is_out_file_by_table_name: false # 是否根据表名生成多个model
+is_out_page: true # 是否输出分页函数
+
+db_info:
+  host : xxx
+  port : xxx
+  username : xxx
+  password : xxx
+  database : xxx
+  type: 0 # 数据库类型:0:mydb , 1:sqlite , 2:mssql
+  maxIDleConns: 5
+  maxOpenConns: 20
+  connMaxIDleTime: 300
+  connMaxLifetime: 3600
+self_type_define: # 自定义数据类型映射
+  datetime: time.Time
+  time: time.Time
+  int unsigned: uint32
+  bigint: int64
+  ^(int)[(]\d+[)]: int
+out_file_name: "" # 自定义生成文件名
+web_tag_type: 1 # json tag类型 0: 小驼峰 1: 下划线

@@ -1,0 +1,99 @@
+# This file is a template, and might need editing before it works on your project.
+# To contribute improvements to CI/CD templates, please follow the Development guide at:
+# https://docs.gitlab.com/ee/development/cicd/templates.html
+# This specific template is located at:
+# https://gitlab.com/gitlab-org/gitlab/-/blob/master/lib/gitlab/ci/templates/Getting-Started.gitlab-ci.yml
+
+# This is a sample GitLab CI/CD configuration file that should run without any modifications.
+# It demonstrates a basic 3 stage CI/CD pipeline. Instead of real tests or scripts,
+# it uses echo commands to simulate the pipeline execution.
+#
+# A pipeline is composed of independent jobs that run scripts, grouped into stages.
+# Stages run in sequential order, but jobs within stages run in parallel.
+#
+# For more information, see: https://docs.gitlab.com/ee/ci/yaml/index.html#stages
+
+stages:          # List of stages for jobs, and their order of execution
+#   - build
+#   - test
+#   - deploy
+
+
+variables:
+  OBJECT_NAME: gov
+  WORK_DIR: /home/gitlab-runner/xyfw/$OBJECT_NAME
+  TEST_DIR: $WORK_DIR/$OBJECT_NAME-test
+  DEPLOY_DIR: $WORK_DIR/$OBJECT_NAME-pro
+
+# ========== 测试 ===============
+test-job:   # This job runs in the test stage.
+  stage: test    # It only starts when the job in the build stage completes successfully.
+  tags:
+    - hw3
+  when: manual
+  script:
+    - echo "Running unit tests..."
+    - ls
+    - pwd
+
+    # 版本
+    - git describe --tags --always > app.version
+
+    # 编译
+    - go env -w GOPROXY=https://goproxy.cn
+    - go env -w CGO_ENABLED=0
+    - go mod tidy -compat=1.17
+
+    - go build -o $OBJECT_NAME.sh main.go
+
+
+
+    # 目录不存在则创建
+    - if [ ! -d "/data/" ];then mkdir -p $TEST_DIR; else echo "$TEST_DIR 文件夹已经存在"; fi
+
+    # 部署
+    - cp -f app.version $TEST_DIR/
+
+    - cp -f $OBJECT_NAME.sh $TEST_DIR/
+    - cp -f config.yml $TEST_DIR/
+
+
+    - cd $TEST_DIR
+    - pwd
+    - gos.sh restart $OBJECT_NAME
+
+#    #  判断是否启动
+    #    - if [[ $(docker-compose ps | grep "Up" | wc -l) -gt 1 ]]; then echo "Up" ; else cat "启动失败".txt ; fi
+
+#    # 判断服务是否启动
+    - sleep 5s
+    - if [[  $(curl https://service.dousougou.com:8082/app/$OBJECT_NAME -k | awk 'NF') =~ $(cat app.version) ]]; then echo "Up" ; else cat "启动失败".txt ; fi
+    - echo "Code coverage is 100%"
+log:   # This job runs in the test stage.
+  stage: build    # It only starts when the job in the build stage completes successfully.
+  tags:
+    - hw3
+  when: manual
+  script:
+    - echo "Running unit tests... This will take about 60 seconds."
+    - ls
+    - pwd
+
+    - |
+      if [ ! -d "logs" ]; then
+        mkdir logs
+      fi
+    - rm -rf logs/*
+    - cp -r $TEST_DIR/*.log logs/test/
+    - cp -r $TEST_DIR/log* logs/test/
+
+    - cp -r $DEPLOY_DIR/*.log logs/pro/
+    - cp -r $DEPLOY_DIR/log* logs/pro/
+
+
+    - echo "Code coverage is 100%"
+
+  artifacts:
+    name: log
+    paths:
+      - logs
