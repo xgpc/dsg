@@ -2,6 +2,7 @@ package dsg
 
 import (
 	"github.com/xgpc/dsg/pkg/aes/ecb_aes"
+	"github.com/xgpc/dsg/pkg/util"
 )
 
 func OptionAes(aesKey string) option {
@@ -31,6 +32,14 @@ func EnMobile(mobile string) string {
 	return mobile[0:3] + "****" + mobile[7:]
 }
 
+func CheckMobile(mobile string) bool {
+	return util.ValidatePhone(mobile)
+}
+
 func EnIDCard(idCard string) string {
 	return idCard[0:6] + "********" + idCard[14:]
+}
+
+func CheckIDCard(idCard string) bool {
+	return util.ValidateIDCard(idCard)
 }

@@ -17,6 +17,8 @@ var (
 	_redis *redis2.Client
 	// jwt
 	_jetKey string
+	// aes
+	_aesKey []byte
 )
 
 type option func() error
