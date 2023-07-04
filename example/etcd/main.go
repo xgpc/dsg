@@ -66,7 +66,6 @@ type Service struct {
 func discoverServices(client *clientv3.Client, name string) ([]Service, error) {
 	key := fmt.Sprintf("/services/%s", name)
 
-	fmt.Println(key)
 	resp, err := client.Get(context.Background(), key, clientv3.WithPrefix())
 	if err != nil {
 		panic(err)
