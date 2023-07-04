@@ -1,25 +1,29 @@
-package aes
+package dsg
 
-import "github.com/xgpc/dsg/pkg/aes/ecb_aes"
+import (
+	"github.com/xgpc/dsg/pkg/aes/ecb_aes"
+)
 
-var keyByte []byte
+func OptionAes(aesKey string) option {
+	return func() error {
+		_aesKey = []byte(aesKey)
+		return nil
+	}
 
-func Init(key string) {
-	keyByte = []byte(key)
 }
 
 func key() []byte {
-	if len(keyByte) == 0 {
+	if len(_aesKey) == 0 {
 		panic("keyByte is nil")
 	}
-	return keyByte
+	return _aesKey
 }
 
-func EnCode(data string) []byte {
+func AESEnCode(data string) []byte {
 	return ecb_aes.AESEncrypt([]byte(data), key())
 }
 
-func DeCode(data []byte) string {
+func AESDeCode(data []byte) string {
 	return string(ecb_aes.AESDecrypt(data, key()))
 }
 
