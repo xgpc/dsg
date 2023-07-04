@@ -2,26 +2,25 @@ package dsg
 
 import (
 	"encoding/base64"
+	"github.com/go-redis/redis/v8"
 	"github.com/kataras/iris/v12"
 	"github.com/xgpc/dsg/exce"
-	"github.com/xgpc/dsg/service/cryptService"
 	"gorm.io/gorm"
 	"reflect"
 	"strconv"
-	"time"
 )
 
-type ApiInterface interface {
-	Handler() int
-}
+//type ApiInterface interface {
+//    Handler() int
+//}
 
-type Api struct {
-	Method     string
-	Name       string
-	Login      bool
-	AuthKey    string
-	Controller func(base *Base) ApiInterface
-}
+//type Api struct {
+//    Method     string
+//    Name       string
+//    Login      bool
+//    AuthKey    string
+//    Controller func(base *Base) ApiInterface
+//}
 
 type ResSign struct {
 	RandomStr string
@@ -31,22 +30,7 @@ type ResSign struct {
 
 type Base struct {
 	// 请求
-	ctx             iris.Context `json:"-"`
-	Method          string       `json:"-"`
-	Path            string       `json:"-"`
-	isMustJsonParam bool
-	Time            time.Time `json:"-"`
-	TimeStamp       int64     `json:"-"`
-
-	// 参数签名
-	RandomStr string `valid:"length(32|32)"`
-	SignAt    int64  `valid:"timestamp"`
-	Sign      string `valid:"-"`
-
-	// 会话
-	//Session *Session `json:"-"`
-	//MyId    uint32   `json:"-"`
-	dbBegin bool
+	ctx iris.Context `json:"-"`
 }
 
 func NewBase(ctx iris.Context) *Base {
@@ -139,62 +123,58 @@ func (p *Base) resp(data interface{}) {
 	return
 }
 
-func (p *Base) CancelMustJsonParam() {
-	p.isMustJsonParam = false
-}
-
 // DB 默认
 func (p *Base) DB() *gorm.DB {
-	return MySqlDefault()
+	return _db
 }
-func (p *Base) Redis() *RedisDsg {
-	return RedisDefault()
-}
-
-// CryptSend 加密：后端--->前端
-func (p *Base) CryptSend(data []byte) {
-	AesKey, err := cryptService.GenKeyByte(16)
-	if err != nil {
-		exce.ThrowSys(err)
-	}
-	iv, err := cryptService.GenKeyByte(16)
-	if err != nil {
-		exce.ThrowSys(err)
-	}
-	encrypted, err := cryptService.AesEncrypt(data, AesKey, iv)
-	if err != nil {
-		exce.ThrowSys(err)
-	}
-	//对AES秘钥加密
-	rsaEncrypt := cryptService.RSAEncrypt(AesKey, p.Key())
-
-	p.SuccessWithData(map[string]interface{}{
-		"key":  rsaEncrypt,
-		"tag":  iv,
-		"data": encrypted,
-	})
-
+func (p *Base) Redis() *redis.Client {
+	return _redis
 }
 
-// CryptReceive 加密：后端--->前端
-func (p *Base) CryptReceive() []byte {
-	var param struct {
-		// RSA公钥加密AES后的密文
-		Key []byte `validate:"required"`
-		// AES偏移量
-		IV []byte `validate:"required" json:"Tag"`
-		// AES加密数据后的密文
-		Data []byte `validate:"required"`
-	}
-	p.Init(&param)
+//// CryptSend 加密：后端--->前端
+//func (p *Base) CryptSend(data []byte) {
+//    AesKey, err := cryptService.GenKeyByte(16)
+//    if err != nil {
+//        exce.ThrowSys(err)
+//    }
+//    iv, err := cryptService.GenKeyByte(16)
+//    if err != nil {
+//        exce.ThrowSys(err)
+//    }
+//    encrypted, err := cryptService.AesEncrypt(data, AesKey, iv)
+//    if err != nil {
+//        exce.ThrowSys(err)
+//    }
+//    //对AES秘钥加密
+//    rsaEncrypt := cryptService.RSAEncrypt(AesKey, p.Key())
+//
+//    p.SuccessWithData(map[string]interface{}{
+//        "key":  rsaEncrypt,
+//        "tag":  iv,
+//        "data": encrypted,
+//    })
+//
+//}
 
-	//------>
-	// 使用RSA私钥解出AES秘钥
-	decryptAESKey := cryptService.RSADecrypt(param.Key, cryptService.RSAKey.Private)
-	origin, err := cryptService.AesDecrypt(param.Data, decryptAESKey, param.IV)
-	if err != nil {
-		exce.ThrowSys(err)
-	}
-	//<----------
-	return origin
-}
+//// CryptReceive 加密：后端--->前端
+//func (p *Base) CryptReceive() []byte {
+//    var param struct {
+//        // RSA公钥加密AES后的密文
+//        Key []byte `validate:"required"`
+//        // AES偏移量
+//        IV []byte `validate:"required" json:"Tag"`
+//        // AES加密数据后的密文
+//        Data []byte `validate:"required"`
+//    }
+//    p.Init(&param)
+//
+//    //------>
+//    // 使用RSA私钥解出AES秘钥
+//    decryptAESKey := cryptService.RSADecrypt(param.Key, cryptService.RSAKey.Private)
+//    origin, err := cryptService.AesDecrypt(param.Data, decryptAESKey, param.IV)
+//    if err != nil {
+//        exce.ThrowSys(err)
+//    }
+//    //<----------
+//    return origin
+//}

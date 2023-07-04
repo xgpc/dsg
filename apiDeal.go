@@ -3,7 +3,7 @@ package dsg
 import (
 	"encoding/json"
 	"github.com/xgpc/dsg/exce"
-	"github.com/xgpc/dsg/service/validatorService"
+	"github.com/xgpc/dsg/pkg/validator"
 	"reflect"
 )
 
@@ -39,7 +39,7 @@ func (p *Base) Init(data interface{}) {
 // ValidateParam 参数校验
 func (p *Base) ValidateParam(data interface{}) {
 	// 加载验证参数
-	err := validatorService.GetTranslations().ValidateParam(data)
+	err := validator.GetTranslations().ValidateParam(data)
 	if err != nil {
 		exce.ThrowSys(exce.CodeRequestError, err.Error())
 	}
