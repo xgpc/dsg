@@ -53,13 +53,13 @@ func (p *Handler) DiscoverServices(name string) ([]Service, error) {
 	}
 	var list []Service
 	for _, kv := range resp.Kvs {
-		address, port, err := parseServiceKey(string(kv.Key))
+		serverName, address, port, err := parseServiceKey(string(kv.Key))
 		if err != nil {
 			fmt.Println(err)
 			continue
 		}
 		node := Service{
-			Name:    name,
+			Name:    serverName,
 			Address: address,
 			Port:    port,
 		}
@@ -71,27 +71,29 @@ func (p *Handler) DiscoverServices(name string) ([]Service, error) {
 }
 
 // 解析key
-func parseServiceKey(key string) (string, int, error) {
-	var address string
+func parseServiceKey(key string) (string, string, int, error) {
+	var name, address string
 	var port int
 
 	index := strings.LastIndex(key, "/")
 
+	name = key[0:index]
+
 	split := strings.Split(key[index+1:], ":")
 	if len(split) != 2 {
 		fmt.Println(split, "大于2个")
-		return "", 0, fmt.Errorf("key 解析失败:%s", key[index:])
+		return "", "", 0, fmt.Errorf("key 解析失败:%s", key[index:])
 	}
 
 	address = split[0]
 
 	atoi, err := strconv.Atoi(split[1])
 	if err != nil {
-		return "", 0, fmt.Errorf("strconv.Atoi(%s)", split[1])
+		return "", "", 0, fmt.Errorf("strconv.Atoi(%s)", split[1])
 	}
 	port = atoi
 
-	return address, port, nil
+	return name, address, port, nil
 }
 
 // RegisterServiceDefault  注册服务默认配置
