@@ -2,8 +2,8 @@ package dsg
 
 import (
 	"github.com/kataras/iris/v12"
-	"github.com/xgpc/dsg/exce"
-	"github.com/xgpc/dsg/pkg/jwt"
+	"github.com/xgpc/dsg/v2/exce"
+	"github.com/xgpc/dsg/v2/pkg/jwt"
 	"time"
 )
 

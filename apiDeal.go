@@ -2,8 +2,8 @@ package dsg
 
 import (
 	"encoding/json"
-	"github.com/xgpc/dsg/exce"
-	"github.com/xgpc/dsg/pkg/validator"
+	"github.com/xgpc/dsg/v2/exce"
+	"github.com/xgpc/dsg/v2/pkg/validator"
 	"reflect"
 )
 

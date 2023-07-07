@@ -1,8 +1,8 @@
 package dsg
 
 import (
-	"github.com/xgpc/dsg/pkg/aes/ecb_aes"
-	"github.com/xgpc/dsg/pkg/util"
+	"github.com/xgpc/dsg/v2/pkg/aes/ecb_aes"
+	"github.com/xgpc/dsg/v2/pkg/util"
 )
 
 // aes

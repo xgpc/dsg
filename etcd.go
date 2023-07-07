@@ -1,6 +1,6 @@
 package dsg
 
-import "github.com/xgpc/dsg/pkg/etcd"
+import "github.com/xgpc/dsg/v2/pkg/etcd"
 
 var _etcd *etcd.Handler
 

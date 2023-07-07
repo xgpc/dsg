@@ -2,8 +2,8 @@ package dsg
 
 import (
 	"github.com/kataras/iris/v12"
-	"github.com/xgpc/dsg/env"
-	"github.com/xgpc/dsg/pkg/util"
+	"github.com/xgpc/dsg/v2/env"
+	"github.com/xgpc/dsg/v2/pkg/util"
 	"log"
 )
 

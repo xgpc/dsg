@@ -5,7 +5,7 @@ import (
 	"crypto/rsa"
 	"crypto/x509"
 	"encoding/pem"
-	"github.com/xgpc/dsg/exce"
+	"github.com/xgpc/dsg/v2/exce"
 	"os"
 )
 

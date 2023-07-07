@@ -2,8 +2,8 @@ package env
 
 import (
 	"fmt"
-	"github.com/xgpc/dsg/pkg/mysql"
-	"github.com/xgpc/dsg/pkg/redis"
+	"github.com/xgpc/dsg/v2/pkg/mysql"
+	"github.com/xgpc/dsg/v2/pkg/redis"
 	"io/ioutil"
 	path2 "path"
 

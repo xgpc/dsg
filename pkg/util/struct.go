@@ -1,7 +1,7 @@
 package util
 
 import (
-	"github.com/xgpc/dsg/pkg/json"
+	"github.com/xgpc/dsg/v2/pkg/json"
 )
 
 func StructToMap(obj interface{}) map[string]interface{} {

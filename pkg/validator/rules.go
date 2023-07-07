@@ -8,7 +8,7 @@ package validator
 import (
 	"regexp"
 
-	"github.com/xgpc/dsg/pkg/util"
+	"github.com/xgpc/dsg/v2/pkg/util"
 
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"

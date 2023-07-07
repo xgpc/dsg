@@ -10,7 +10,7 @@ import (
 	"errors"
 	goJwt "github.com/golang-jwt/jwt/v5"
 
-	"github.com/xgpc/dsg/exce"
+	"github.com/xgpc/dsg/v2/exce"
 	"time"
 )
 

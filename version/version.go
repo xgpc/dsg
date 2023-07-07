@@ -1,7 +1,7 @@
 package version
 
 import (
-	"github.com/xgpc/dsg"
+	"github.com/xgpc/dsg/v2"
 	"io/ioutil"
 
 	"github.com/kataras/iris/v12"

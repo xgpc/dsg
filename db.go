@@ -2,8 +2,8 @@ package dsg
 
 import (
 	redis2 "github.com/go-redis/redis/v8"
-	"github.com/xgpc/dsg/pkg/mysql"
-	"github.com/xgpc/dsg/pkg/redis"
+	"github.com/xgpc/dsg/v2/pkg/mysql"
+	"github.com/xgpc/dsg/v2/pkg/redis"
 	"gorm.io/gorm"
 )
 

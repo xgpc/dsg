@@ -2,7 +2,7 @@ package middleware
 
 import (
 	"github.com/kataras/iris/v12"
-	"github.com/xgpc/dsg/exce"
+	"github.com/xgpc/dsg/v2/exce"
 )
 
 func ExceptionLog(ctx iris.Context) {

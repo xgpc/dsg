@@ -3,7 +3,7 @@ package validator
 import (
 	"sync"
 
-	"github.com/xgpc/dsg/pkg/util"
+	"github.com/xgpc/dsg/v2/pkg/util"
 )
 
 var (
