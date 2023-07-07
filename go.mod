@@ -1,4 +1,4 @@
-module github.com/xgpc/dsg
+module github.com/xgpc/dsg/v2
 
 go 1.20
 
