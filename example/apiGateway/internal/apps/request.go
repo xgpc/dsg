@@ -2,8 +2,7 @@ package apps
 
 import (
 	bytes2 "bytes"
-	"github.com/xgpc/dsg/exce"
-	"github.com/xgpc/dsg/util"
+
 	"io"
 	"net/http"
 	"time"
@@ -12,7 +11,7 @@ import (
 func Request(url, Method string, body map[string]interface{}, Headers map[string]string) []byte {
 	var data []byte
 	if body != nil {
-		marshal, err := util.JsonEncode(body)
+		marshal, err := json.Encode(body)
 		if err != nil {
 			exce.ThrowSys(exce.CodeRequestError, err.Error())
 		}

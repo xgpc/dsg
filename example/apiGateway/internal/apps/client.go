@@ -2,7 +2,6 @@ package apps
 
 import (
 	"fmt"
-	"github.com/xgpc/dsg/pkg/log"
 	"net/http"
 	"os"
 	"time"
@@ -38,7 +37,7 @@ func runTask() {
 func register() {
 	defer func() {
 		if err := recover(); err != nil {
-			log.Error(err)
+			fmt.Println(err)
 			os.Exit(-1)
 		}
 	}()
@@ -51,7 +50,7 @@ func sendRequest(url string, body map[string]interface{}, Headers map[string]str
 	// 防止低筒崩溃
 	defer func() {
 		if err := recover(); err != nil {
-			log.Error(err)
+			fmt.Println(err)
 		}
 	}()
 
