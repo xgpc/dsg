@@ -5,6 +5,9 @@ import (
 	"github.com/xgpc/dsg/pkg/util"
 )
 
+// aes
+var _aesKey []byte
+
 func OptionAes(aesKey string) option {
 	return func() error {
 		_aesKey = []byte(aesKey)

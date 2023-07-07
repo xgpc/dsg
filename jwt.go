@@ -7,6 +7,9 @@ import (
 	"time"
 )
 
+// jwt
+var _jetKey string
+
 func OptionJwt(JwtKey string) func() error {
 	return func() error {
 		_jetKey = JwtKey
@@ -16,14 +19,7 @@ func OptionJwt(JwtKey string) func() error {
 
 // Login 中间件 login
 func Login(ctx iris.Context) {
-	p := NewBase(ctx)
-
-	token := ctx.GetHeader("token")
-	parseToken, err := jwt.ParseToken(_jetKey, token)
-	if err != nil {
-		exce.ThrowSys(exce.CodeRequestError, "解析token失败"+err.Error())
-	}
-	p.SetMyId(parseToken.UserID)
+	MiddlewareJwt(ctx)
 }
 
 // MiddlewareJwt 中间件 login
