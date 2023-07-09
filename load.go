@@ -7,6 +7,10 @@ import (
 	"log"
 )
 
+func LoadYml(out interface{}, configPath string) {
+	util.LoadYmlConf(out, configPath)
+}
+
 func Load(conf *env.Conf, configPath string) {
 	// load config
 	util.LoadYmlConf(conf, configPath)

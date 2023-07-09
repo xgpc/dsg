@@ -1,20 +1,25 @@
 package main
 
-import (
-	"github.com/kataras/iris/v12"
-	"github.com/kataras/iris/v12/context"
-	"github.com/xgpc/dsg"
-)
+import "github.com/xgpc/dsg/v2/pkg/etcd"
 
 func main() {
-	dsg.Default()
+	conf := etcd.Config{
+		Name:                 "/apps/{server-name}",
+		Address:              "127.0.0.1",
+		Port:                 8081,
+		Endpoints:            []string{"http://127.0.0.1:2379"},
+		AutoSyncInterval:     0,
+		DialTimeout:          10,
+		DefLeaseSecond:       10,
+		DialKeepAliveTime:    0,
+		DialKeepAliveTimeout: 0,
+	}
+	client := etcd.New(conf)
 
-	api := iris.Default()
+	err := client.RegisterServiceDefault()
+	if err != nil {
+		panic(err)
+	}
 
-	api.Use(func(ctx *context.Context) {
-		//p := dsg.New(ctx)
-		// TODO: 可以调用dsg框架中的接口
-		//p.Ctx
-	})
-
+	select {}
 }

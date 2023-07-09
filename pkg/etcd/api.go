@@ -43,6 +43,11 @@ type Service struct {
 	Port    int
 }
 
+func (s *Service) GetUrl() string {
+	url := "http://" + s.Address + ":" + strconv.Itoa(s.Port)
+	return url
+}
+
 // DiscoverServices 发现服务
 func (p *Handler) DiscoverServices(name string) ([]Service, error) {
 	key := name

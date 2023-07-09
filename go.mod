@@ -12,6 +12,7 @@ require (
 	github.com/json-iterator/go v1.1.12
 	github.com/kataras/iris/v12 v12.2.0-beta7
 	github.com/natefinch/lumberjack v2.0.0+incompatible
+	github.com/rs/cors v1.9.0
 	go.etcd.io/etcd/client/v3 v3.5.9
 	go.uber.org/zap v1.21.0
 	google.golang.org/grpc v1.43.0

@@ -2,7 +2,8 @@ package main
 
 import (
 	"fmt"
-	"github.com/xgpc/dsg/pkg/etcd"
+	"github.com/xgpc/dsg/v2/pkg/etcd"
+
 	clientv3 "go.etcd.io/etcd/client/v3"
 	"time"
 )
@@ -11,12 +12,15 @@ func main() {
 	// 链接etcd
 
 	conf := etcd.Config{
-		Name:           "/apps/admin",
-		Address:        "127.0.0.1",
-		Port:           8081,
-		Endpoints:      []string{"127.0.0.1:2379"},
-		DialTimeout:    10,
-		DefLeaseSecond: 20,
+		Name:                 "api-gateway",
+		Address:              "127.0.0.1",
+		Port:                 8080,
+		Endpoints:            []string{"http://127.0.0.1:2379"},
+		AutoSyncInterval:     0,
+		DialTimeout:          10,
+		DefLeaseSecond:       10,
+		DialKeepAliveTime:    0,
+		DialKeepAliveTimeout: 0,
 	}
 
 	client := etcd.New(conf)
@@ -39,7 +43,7 @@ func main() {
 
 	// 发现服务
 	for {
-		services, err := client.DiscoverServices("/apps/admin")
+		services, err := client.DiscoverServices("/apps/")
 		if err != nil {
 			panic(err)
 		}
