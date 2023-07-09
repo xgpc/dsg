@@ -14,6 +14,14 @@ var (
 	_redis *redis2.Client
 )
 
+// DB 默认
+func DB() *gorm.DB {
+	return _db
+}
+func Redis() *redis2.Client {
+	return _redis
+}
+
 func OptionMysql(info mysql.DBInfo) func() error {
 	return func() error {
 		_db = mysql.New(info)
