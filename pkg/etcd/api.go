@@ -80,23 +80,19 @@ func parseServiceKey(key string) (string, string, int, error) {
 	var name, address string
 	var port int
 
-	index := strings.LastIndex(key, "/")
+	list := strings.Split(key, "/")
 
-	name = key[0:index]
-
-	split := strings.Split(key[index+1:], ":")
-	if len(split) != 2 {
-		fmt.Println(split, "大于2个")
-		return "", "", 0, fmt.Errorf("key 解析失败:%s", key[index:])
+	if len(list) != 3 {
+		return "", "", 0, fmt.Errorf("%s 服务器解析失败", key)
 	}
 
-	address = split[0]
+	name = list[0]
+	address = list[1]
 
-	atoi, err := strconv.Atoi(split[1])
+	port, err := strconv.Atoi(list[2])
 	if err != nil {
-		return "", "", 0, fmt.Errorf("strconv.Atoi(%s)", split[1])
+		return "", "", 0, fmt.Errorf("strconv.Atoi(%s)", list[2])
 	}
-	port = atoi
 
 	return name, address, port, nil
 }
@@ -108,7 +104,7 @@ func (p *Handler) RegisterServiceDefault() error {
 
 // RegisterService 注册服务
 func (p *Handler) RegisterService(name string, address string, port int) error {
-	key := fmt.Sprintf("%s/%s:%d", name, address, port)
+	key := fmt.Sprintf("%s/%s/%d", name, address, port)
 
 	value := ""
 
