@@ -37,11 +37,6 @@ func NewBase(ctx iris.Context) *Base {
 	return &Base{ctx: ctx}
 }
 
-type UpBase struct {
-	Base
-	param map[string]interface{}
-}
-
 func (p *Base) Ctx() iris.Context {
 	return p.ctx
 }
@@ -59,10 +54,7 @@ func (p *Base) MyId() uint32 {
 }
 
 func (p *Base) MyIdToString() string {
-	id, err := p.ctx.Values().GetUint32("mid")
-	if err != nil {
-		exce.ThrowSys(exce.CodeUserNoAuth, err.Error())
-	}
+	id := p.MyId()
 	return strconv.Itoa(int(id))
 }
 

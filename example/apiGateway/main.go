@@ -18,23 +18,23 @@ func setupCORS(w *http.ResponseWriter) {
 }
 
 func main() {
-	conf := dsg.Config{}
-	dsg.Load()
-
-	conf := etcd.Config{
-		Name:                 "/apps/{server-name}",
-		Address:              "127.0.0.1",
-		Port:                 8081,
-		Endpoints:            []string{"http://127.0.0.1:2379"},
-		AutoSyncInterval:     0,
-		DialTimeout:          10,
-		DefLeaseSecond:       10,
-		DialKeepAliveTime:    0,
-		DialKeepAliveTimeout: 0,
+	conf := dsg.Config{
+		Etcd: etcd.Config{
+			Name:                 "/apps/{server-name}",
+			Address:              "127.0.0.1",
+			Port:                 8081,
+			Endpoints:            []string{"http://127.0.0.1:2379"},
+			AutoSyncInterval:     0,
+			DialTimeout:          10,
+			DefLeaseSecond:       10,
+			DialKeepAliveTime:    0,
+			DialKeepAliveTimeout: 0,
+		},
 	}
-	client := etcd.New(conf)
-	dsg.Default(dsg.OptionEtcd(conf))
-	err := client.RegisterServiceDefault()
+	//dsg.Load()
+
+	dsg.Default(dsg.OptionEtcd(conf.Etcd))
+	err := dsg.Etcd.RegisterServiceDefault()
 	if err != nil {
 		panic(err)
 	}
@@ -45,7 +45,6 @@ func main() {
 
 	// 中间件
 
-	//
 	api.Handle("all", "/", Handle)
 
 	api.Run(iris.Addr(":8080"))

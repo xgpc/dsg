@@ -4,6 +4,7 @@ import (
 	"time"
 )
 
+// 123
 type Config struct {
 	Name    string
 	Address string

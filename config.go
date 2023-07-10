@@ -6,6 +6,8 @@ import (
 	"github.com/xgpc/dsg/v2/pkg/redis"
 )
 
+var Conf Config
+
 type Config struct {
 	TLS    string       `yaml:"tls"`
 	Etcd   etcd.Config  `yaml:"etcd"`
