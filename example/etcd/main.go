@@ -14,7 +14,7 @@ func main() {
 	conf := etcd.Config{
 		Name:                 "api-gateway",
 		Address:              "127.0.0.1",
-		Port:                 8080,
+		Port:                 8082,
 		Endpoints:            []string{"http://127.0.0.1:2379"},
 		AutoSyncInterval:     0,
 		DialTimeout:          10,

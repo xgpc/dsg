@@ -4,11 +4,13 @@ import (
 	"fmt"
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/context"
+	"github.com/rs/cors"
 	"github.com/xgpc/dsg/v2"
-	"github.com/xgpc/dsg/v2/pkg/etcd"
+	"github.com/xgpc/dsg/v2/middleware"
 	"io"
 	"net/http"
 	"strings"
+	"time"
 )
 
 func setupCORS(w *http.ResponseWriter) {
@@ -18,22 +20,10 @@ func setupCORS(w *http.ResponseWriter) {
 }
 
 func main() {
-	conf := dsg.Config{
-		Etcd: etcd.Config{
-			Name:                 "/apps/{server-name}",
-			Address:              "127.0.0.1",
-			Port:                 8081,
-			Endpoints:            []string{"http://127.0.0.1:2379"},
-			AutoSyncInterval:     0,
-			DialTimeout:          10,
-			DefLeaseSecond:       10,
-			DialKeepAliveTime:    0,
-			DialKeepAliveTimeout: 0,
-		},
-	}
-	//dsg.Load()
 
-	dsg.Default(dsg.OptionEtcd(conf.Etcd))
+	dsg.Load("config.yml")
+
+	dsg.Default(dsg.OptionEtcd(dsg.Conf.Etcd))
 	err := dsg.Etcd.RegisterServiceDefault()
 	if err != nil {
 		panic(err)
@@ -43,17 +33,32 @@ func main() {
 
 	api := iris.Default()
 
+	c := cors.AllowAll()
+	api.WrapRouter(c.ServeHTTP)
+	api.Use(middleware.ExceptionLog)
+
 	// 中间件
+	api.WrapRouter(Handle)
 
-	api.Handle("all", "/", Handle)
+	api.Handle("ANY", "/1", func(c *context.Context) {
+		time.Sleep(time.Second * 10)
+		c.JSON(`{"a":1}`)
+	})
 
-	api.Run(iris.Addr(":8080"))
+	api.Handle("ANY", "/2", func(c *context.Context) {
+		c.JSON(`{"a":2}`)
+	})
+
+	err = api.Run(iris.Addr(":8082"))
+	if err != nil {
+		panic(err)
+	}
 }
 
-func Handle(ctx *context.Context) {
+func Handle(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 
 	// 获取想访问的服务
-	path := ctx.Path()
+	path := r.RequestURI
 	serverName := GetPathServerName(path)
 
 	// 找到服务器
@@ -61,7 +66,8 @@ func Handle(ctx *context.Context) {
 
 	// 转发
 	if len(list) == 0 {
-		panic(path + "可用服务未上线")
+		next(w, r)
+		return
 	}
 
 	// TODO: 添加负载均衡
@@ -73,28 +79,35 @@ func Handle(ctx *context.Context) {
 	}
 
 	// 服务转发
-	res, err := Request(serverNode.GetUrl()+path, ctx)
+	res, err := Request(serverNode.GetUrl(dsg.GetEtcdLocalHost())+path, w, r)
+	if err != nil {
+		w.WriteHeader(res.StatusCode)
+		io.WriteString(w, fmt.Sprintf("Failed to read response body: %v", err))
+		return
+	}
+
 	// 数据返回
 	// 从转发响应中读取响应体
 	respBody, err := io.ReadAll(res.Body)
+	defer res.Body.Close()
 	if err != nil {
-		ctx.StatusCode(http.StatusInternalServerError)
-		ctx.WriteString(fmt.Sprintf("Failed to read response body: %v", err))
+		w.WriteHeader(res.StatusCode)
+		io.WriteString(w, fmt.Sprintf("Failed to read response body: %v", err))
 		return
 	}
 
 	// 将转发响应信息返回给客户端
-	ctx.StatusCode(res.StatusCode)
-	ctx.ContentType(res.Header.Get("Content-Type"))
-	ctx.Write(respBody)
+	w.WriteHeader(res.StatusCode)
+	w.Header().Set("Content-Type", res.Header.Get("Content-Type"))
+	w.Write(respBody)
 }
 
-func Request(url string, ctx *context.Context) (*http.Response, error) {
+func Request(url string, w http.ResponseWriter, r *http.Request) (*http.Response, error) {
 	// 从请求体中读取原始请求信息
-	body, err := io.ReadAll(ctx.Request().Body)
+	body, err := io.ReadAll(r.Body)
 	if err != nil {
-		ctx.StatusCode(http.StatusInternalServerError)
-		ctx.WriteString(fmt.Sprintf("Failed to read request body: %s  \n err:%v", string(body), err))
+		w.WriteHeader(http.StatusInternalServerError)
+		io.WriteString(w, fmt.Sprintf("Failed to read request body: %s  \n err:%v", string(body), err))
 		return nil, err
 	}
 
@@ -102,27 +115,27 @@ func Request(url string, ctx *context.Context) (*http.Response, error) {
 	targetURL := url
 
 	// 创建一个新的HTTP请求
-	req, err := http.NewRequest(ctx.Method(), targetURL, nil)
+	req, err := http.NewRequest(r.Method, targetURL, nil)
 	if err != nil {
-		ctx.StatusCode(http.StatusInternalServerError)
-		ctx.WriteString(fmt.Sprintf("Failed to create request: %v", err))
+		w.WriteHeader(http.StatusInternalServerError)
+		io.WriteString(w, fmt.Sprintf("Failed to create request: %v", err))
 		return nil, err
 	}
 
 	// 将原始请求信息复制到新的请求中
-	req.Header = ctx.Request().Header.Clone()
-	req.Body = io.NopCloser(ctx.Request().Body)
-	req.ContentLength = ctx.Request().ContentLength
+	req.Header = r.Header.Clone()
+	req.Body = io.NopCloser(r.Body)
+
+	req.ContentLength = r.ContentLength
 
 	// 发送转发请求
 	client := &http.Client{}
 	res, err := client.Do(req)
 	if err != nil {
-		ctx.StatusCode(http.StatusInternalServerError)
-		ctx.WriteString(fmt.Sprintf("Failed to forward request: %v", err))
+		w.WriteHeader(http.StatusInternalServerError)
+		io.WriteString(w, fmt.Sprintf("Failed to forward request: %v", err))
 		return nil, err
 	}
-	defer res.Body.Close()
 
 	return res, nil
 
@@ -131,10 +144,10 @@ func Request(url string, ctx *context.Context) (*http.Response, error) {
 func GetPathServerName(path string) string {
 
 	split := strings.Split(path, "/")
-	if len(split) < 3 {
-		panic(path + "未能找到服务")
+	if len(split) > 2 {
+		return split[1] + "/"
 	}
 
-	return "" + split[1] + "/" + split[2]
+	return ""
 
 }

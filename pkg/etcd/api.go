@@ -11,7 +11,7 @@ import (
 
 type Handler struct {
 	client *clientv3.Client
-	conf   Config
+	Conf   Config
 }
 
 func New(conf Config) *Handler {
@@ -25,7 +25,7 @@ func New(conf Config) *Handler {
 		panic(err)
 	}
 
-	return &Handler{client: client, conf: conf}
+	return &Handler{client: client, Conf: conf}
 }
 
 func (p *Handler) Get(key string, opts ...clientv3.OpOption) (*clientv3.GetResponse, error) {
@@ -43,8 +43,15 @@ type Service struct {
 	Port    int
 }
 
-func (s *Service) GetUrl() string {
-	url := "http://" + s.Address + ":" + strconv.Itoa(s.Port)
+func (s *Service) GetUrl(locatHost string) string {
+	var Address string
+	if s.Address == locatHost {
+		Address = "127.0.0.1"
+	} else {
+		Address = s.Address
+	}
+
+	url := "http://" + Address + ":" + strconv.Itoa(s.Port)
 	return url
 }
 
@@ -99,7 +106,7 @@ func parseServiceKey(key string) (string, string, int, error) {
 
 // RegisterServiceDefault  注册服务默认配置
 func (p *Handler) RegisterServiceDefault() error {
-	return p.RegisterService(p.conf.Name, p.conf.Address, p.conf.Port)
+	return p.RegisterService(p.Conf.Name, p.Conf.Address, p.Conf.Port)
 }
 
 // RegisterService 注册服务

@@ -4,6 +4,11 @@ import "github.com/xgpc/dsg/v2/pkg/etcd"
 
 var Etcd *etcd.Handler
 
+func GetEtcdLocalHost() string {
+
+	return Etcd.Conf.Address
+}
+
 func GetServiceList(serverName string) []etcd.Service {
 	services, err := Etcd.DiscoverServices(serverName)
 	if err != nil {

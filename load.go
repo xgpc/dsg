@@ -14,7 +14,7 @@ func LoadYml(out interface{}, configPath string) {
 
 func Load(configPath string) {
 	// load config
-	util.LoadYmlConf(Conf, configPath)
+	util.LoadYmlConf(&Conf, configPath)
 }
 
 // Listening 开始监听端口

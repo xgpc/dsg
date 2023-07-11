@@ -9,9 +9,7 @@
 package util
 
 import (
-	"fmt"
-	"gopkg.in/yaml.v3"
-	"io/ioutil"
+	"github.com/spf13/viper"
 	"path"
 )
 
@@ -27,12 +25,15 @@ func LoadYmlConf(out interface{}, fileName ...string) {
 		configPath = path.Join(fileName...)
 	}
 
-	yamlFile, err := ioutil.ReadFile(configPath)
+	viper.SetConfigFile(configPath)
+	viper.AutomaticEnv()
+	err := viper.ReadInConfig()
 	if err != nil {
-		fmt.Println(err.Error())
+		panic(err)
 	}
-	err = yaml.Unmarshal(yamlFile, out)
+
+	err = viper.Unmarshal(out)
 	if err != nil {
-		panic(err.Error())
+		panic(err)
 	}
 }

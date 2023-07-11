@@ -1,0 +1,12 @@
+etcd:
+  name: api-gateway
+  address: 192.168.0.245
+  port: 8082
+  endpoints:
+    - http://127.0.0.1:2379
+  autoSyncInterval:
+  dialTimeout: 10
+  defLeaseSecond: 10
+  dialKeepAliveTime:
+  dialKeepAliveTimeout:
+
