@@ -10,7 +10,7 @@ import (
 )
 
 type Handler struct {
-	client *clientv3.Client
+	Client *clientv3.Client
 	Conf   Config
 }
 
@@ -25,15 +25,15 @@ func New(conf Config) *Handler {
 		panic(err)
 	}
 
-	return &Handler{client: client, Conf: conf}
+	return &Handler{Client: client, Conf: conf}
 }
 
 func (p *Handler) Get(key string, opts ...clientv3.OpOption) (*clientv3.GetResponse, error) {
-	return p.client.Get(context.Background(), key, opts...)
+	return p.Client.Get(context.Background(), key, opts...)
 }
 
 func (p *Handler) Put(key, value string, opts ...clientv3.OpOption) (*clientv3.PutResponse, error) {
-	return p.client.Put(context.Background(), key, value, opts...)
+	return p.Client.Put(context.Background(), key, value, opts...)
 }
 
 // Service 服务结构体
@@ -59,7 +59,7 @@ func (s *Service) GetUrl(locatHost string) string {
 func (p *Handler) DiscoverServices(name string) ([]Service, error) {
 	key := name
 
-	resp, err := p.client.Get(context.Background(), key, clientv3.WithPrefix())
+	resp, err := p.Client.Get(context.Background(), key, clientv3.WithPrefix())
 	if err != nil {
 		panic(err)
 	}
@@ -116,19 +116,19 @@ func (p *Handler) RegisterService(name string, address string, port int) error {
 	value := ""
 
 	// 创建租约
-	lease, err := p.client.Grant(context.Background(), 10)
+	lease, err := p.Client.Grant(context.Background(), 10)
 	if err != nil {
 		panic(err)
 	}
 
 	// 注册服务
-	_, err = p.client.Put(context.Background(), key, value, clientv3.WithLease(lease.ID))
+	_, err = p.Client.Put(context.Background(), key, value, clientv3.WithLease(lease.ID))
 	if err != nil {
 		panic(err)
 	}
 
 	// 自动续租
-	ch, err := p.client.KeepAlive(context.Background(), lease.ID)
+	ch, err := p.Client.KeepAlive(context.Background(), lease.ID)
 	if err != nil {
 		panic(err)
 	}
