@@ -1,16 +1,15 @@
 package main
 
 import (
-	"fmt"
+	"bytes"
+	"context"
 	"github.com/kataras/iris/v12"
-	"github.com/kataras/iris/v12/context"
 	"github.com/rs/cors"
 	"github.com/xgpc/dsg/v2"
+	"github.com/xgpc/dsg/v2/exce"
 	"github.com/xgpc/dsg/v2/middleware"
 	"io"
 	"net/http"
-	"strings"
-	"time"
 )
 
 func setupCORS(w *http.ResponseWriter) {
@@ -24,10 +23,11 @@ func main() {
 	dsg.Load("config.yml")
 
 	dsg.Default(dsg.OptionEtcd(dsg.Conf.Etcd))
-	err := dsg.Etcd.RegisterServiceDefault()
-	if err != nil {
-		panic(err)
-	}
+	//api-gateway网关不进行注册, 防止重复跳转
+	//err := dsg.Etcd.RegisterServiceDefault()
+	//if err != nil {
+	//   panic(err)
+	//}
 
 	// 启动iris
 
@@ -37,117 +37,119 @@ func main() {
 	api.WrapRouter(c.ServeHTTP)
 	api.Use(middleware.ExceptionLog)
 
-	// 中间件
-	api.WrapRouter(Handle)
+	api.Any("/", func(context iris.Context) {
+		p := dsg.NewBase(context)
 
-	api.Handle("ANY", "/1", func(c *context.Context) {
-		time.Sleep(time.Second * 10)
-		c.JSON(`{"a":1}`)
+		p.SuccessWithData(p.Ctx().Path())
 	})
 
-	api.Handle("ANY", "/2", func(c *context.Context) {
-		c.JSON(`{"a":2}`)
+	api.Any("/{appName}/{p:path}", func(ctx iris.Context) {
+		p := dsg.NewBase(ctx)
+
+		// 获取想访问的服务
+		path := ctx.Path()
+		if path[0] != '/' {
+			path = "/" + path
+		}
+
+		serverName := ctx.Params().Get("appName") + "/"
+
+		// 找到服务器
+		list := dsg.GetServiceList(serverName)
+
+		// 转发
+		if len(list) == 0 {
+			exce.ThrowSys(exce.CodeRequestError, "未找到符合条件的服务")
+		}
+
+		// TODO: 添加负载均衡
+		serverNode := list[0]
+
+		// TODO: 不允许自己跳转自己,  但是又怕跳转别人, 先禁止跳转8082 同时api服务器不注册
+
+		url := serverNode.GetUrl()
+
+		// 服务转发
+		res, err := Request(url+path, ctx)
+		if err != nil {
+			exce.ThrowSys(exce.CodeSysBusy, err.Error())
+		}
+
+		p.Ctx().WriteString(string(res))
+
 	})
 
-	err = api.Run(iris.Addr(":8082"))
-	if err != nil {
-		panic(err)
-	}
+	api.Handle("ANY", "/member", func(c iris.Context) {
+		p := dsg.NewBase(c)
+		list, err2 := dsg.Etcd.Client.MemberList(context.Background())
+		if err2 != nil {
+			panic(err2)
+		}
+
+		p.SuccessWithData(list)
+	})
+
+	//api.Handle("ANY", "/list", func(c *context.Context) {
+	//    p := dsg.NewBase(c)
+	//    ////list, err2 := dsg.Etcd.Client.(context2.Background())
+	//    //if err2 != nil {
+	//    //    panic(err2)
+	//    //}
+	//    //
+	//    p.SuccessWithData("暂未开启该功能")
+	//})}
+
+	dsg.Listening(dsg.Conf.Etcd.Port, dsg.Conf.TLS, api)
+
 }
 
-func Handle(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
-
-	// 获取想访问的服务
-	path := r.RequestURI
-	serverName := GetPathServerName(path)
-
-	// 找到服务器
-	list := dsg.GetServiceList(serverName)
-
-	// 转发
-	if len(list) == 0 {
-		next(w, r)
-		return
-	}
-
-	// TODO: 添加负载均衡
-
-	serverNode := list[0]
-
-	if path[0] != '/' {
-		path = "/" + path
-	}
-
-	// 服务转发
-	res, err := Request(serverNode.GetUrl()+path, w, r)
-	if err != nil {
-		w.WriteHeader(res.StatusCode)
-		io.WriteString(w, fmt.Sprintf("Failed to read response body: %v", err))
-		return
-	}
-
-	// 数据返回
-	// 从转发响应中读取响应体
-	respBody, err := io.ReadAll(res.Body)
-	defer res.Body.Close()
-	if err != nil {
-		w.WriteHeader(res.StatusCode)
-		io.WriteString(w, fmt.Sprintf("Failed to read response body: %v", err))
-		return
-	}
-
-	// 将转发响应信息返回给客户端
-	w.WriteHeader(res.StatusCode)
-	w.Header().Set("Content-Type", res.Header.Get("Content-Type"))
-	w.Write(respBody)
-}
-
-func Request(url string, w http.ResponseWriter, r *http.Request) (*http.Response, error) {
+func Request(url string, ctx iris.Context) ([]byte, error) {
 	// 从请求体中读取原始请求信息
-	body, err := io.ReadAll(r.Body)
+
+	body, err := ctx.GetBody()
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		io.WriteString(w, fmt.Sprintf("Failed to read request body: %s  \n err:%v", string(body), err))
-		return nil, err
+		exce.ThrowSys(exce.CodeRequestError, err.Error())
 	}
 
 	// 设置要转发的目标URL
 	targetURL := url
 
 	// 创建一个新的HTTP请求
-	req, err := http.NewRequest(r.Method, targetURL, nil)
+	req, err := http.NewRequest(ctx.Method(), targetURL, bytes.NewBuffer(body))
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		io.WriteString(w, fmt.Sprintf("Failed to create request: %v", err))
-		return nil, err
+		exce.ThrowSys(exce.CodeSysBusy, "http.NewRequest error: "+err.Error())
 	}
 
 	// 将原始请求信息复制到新的请求中
-	req.Header = r.Header.Clone()
-	req.Body = io.NopCloser(r.Body)
-
-	req.ContentLength = r.ContentLength
+	req.Header = ctx.Request().Header.Clone()
 
 	// 发送转发请求
 	client := &http.Client{}
-	res, err := client.Do(req)
+	rsp, err := client.Do(req)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		io.WriteString(w, fmt.Sprintf("Failed to forward request: %v", err))
-		return nil, err
+		exce.ThrowSys(exce.CodeRequestError, err.Error())
 	}
 
-	return res, nil
+	defer rsp.Body.Close()
 
-}
+	rspHead := ctx.ResponseWriter()
 
-func GetPathServerName(path string) string {
-
-	split := strings.Split(path, "/")
-	if len(split) > 2 {
-		return split[1] + "/"
+	for k, v := range rsp.Header.Clone() {
+		var value string
+		if len(v) > 0 {
+			value = v[0]
+		}
+		rspHead.Header().Set(k, value)
 	}
 
-	return ""
+	rspBody, err := io.ReadAll(rsp.Body)
+	if err != nil {
+		exce.ThrowSys(exce.CodeRequestError, err.Error())
+	}
 
+	if rsp.StatusCode != http.StatusOK {
+		exce.ThrowSys(exce.CodeRequestError, rsp.Status)
+	}
+
+	return rspBody, nil
 }
