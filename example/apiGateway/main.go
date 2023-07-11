@@ -79,7 +79,7 @@ func Handle(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 	}
 
 	// 服务转发
-	res, err := Request(serverNode.GetUrl(dsg.GetEtcdLocalHost())+path, w, r)
+	res, err := Request(serverNode.GetUrl()+path, w, r)
 	if err != nil {
 		w.WriteHeader(res.StatusCode)
 		io.WriteString(w, fmt.Sprintf("Failed to read response body: %v", err))

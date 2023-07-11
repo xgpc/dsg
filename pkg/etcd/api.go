@@ -43,15 +43,8 @@ type Service struct {
 	Port    int
 }
 
-func (s *Service) GetUrl(locatHost string) string {
-	var Address string
-	if s.Address == locatHost {
-		Address = "127.0.0.1"
-	} else {
-		Address = s.Address
-	}
-
-	url := "http://" + Address + ":" + strconv.Itoa(s.Port)
+func (s *Service) GetUrl() string {
+	url := "http://" + s.Address + ":" + strconv.Itoa(s.Port)
 	return url
 }
 
@@ -116,7 +109,7 @@ func (p *Handler) RegisterService(name string, address string, port int) error {
 	value := ""
 
 	// 创建租约
-	lease, err := p.Client.Grant(context.Background(), 10)
+	lease, err := p.Client.Grant(context.Background(), int64(p.Conf.DefLeaseSecond))
 	if err != nil {
 		panic(err)
 	}
