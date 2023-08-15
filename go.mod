@@ -12,7 +12,6 @@ require (
 	github.com/json-iterator/go v1.1.12
 	github.com/kataras/iris/v12 v12.2.0-alpha5
 	github.com/natefinch/lumberjack v2.0.0+incompatible
-	github.com/xgpc/util v0.1.8
 	go.uber.org/zap v1.21.0
 	google.golang.org/grpc v1.43.0
 	google.golang.org/protobuf v1.27.1
@@ -74,7 +73,6 @@ require (
 	github.com/nats-io/nkeys v0.3.0 // indirect
 	github.com/nats-io/nuid v1.0.1 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
-	github.com/satori/go.uuid v1.2.0 // indirect
 	github.com/schollz/closestmatch v2.1.0+incompatible // indirect
 	github.com/swaggo/swag v1.6.5 // indirect
 	github.com/tdewolff/minify/v2 v2.10.0 // indirect

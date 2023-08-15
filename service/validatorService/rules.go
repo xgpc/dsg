@@ -3,19 +3,18 @@
 // @Description:   $
 // @File:          registerValidation
 // @Data:          2021/12/311:16
-//
 package validatorService
 
 import (
 	"regexp"
 
-	"github.com/xgpc/util"
+	"github.com/xgpc/dsg/util"
 
 	ut "github.com/go-playground/universal-translator"
 	"github.com/go-playground/validator/v10"
 )
 
-//Rules 校验方法
+// Rules 校验方法
 var Rules = map[string]validator.Func{
 	"mobile": func(fl validator.FieldLevel) bool {
 		res, _ := regexp.MatchString("^1[3-9]\\d{9}$", fl.Field().String())
@@ -23,7 +22,7 @@ var Rules = map[string]validator.Func{
 	},
 }
 
-//RulesMsg 校验返回的错误信息
+// RulesMsg 校验返回的错误信息
 var RulesMsg = map[string]util.RegisterTrans{
 	"mobile": {
 		RegisterTranslationsFunc: func(ut ut.Translator) error {
