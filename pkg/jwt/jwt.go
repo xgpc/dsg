@@ -56,6 +56,7 @@ func MakeToken(key string, userID uint32, ExpiresNum int64) (string, error) {
 
 // ParseToken 解析token
 func ParseToken(key, tokenStr string) (*MapClaims, error) {
+	_key := []byte(key)
 	// 声明一个空的数据声明
 	iJwtCustomClaims := MapClaims{}
 	//ParseWithClaims是NewParser().ParseWithClaims()的快捷方式
@@ -63,7 +64,7 @@ func ParseToken(key, tokenStr string) (*MapClaims, error) {
 	//第二个值是我们之后需要把解析的数据放入的地方，
 	//第三个值是Keyfunc将被Parse方法用作回调函数，以提供用于验证的键。函数接收已解析但未验证的令牌。
 	_, err := goJwt.ParseWithClaims(tokenStr, &iJwtCustomClaims, func(token *goJwt.Token) (interface{}, error) {
-		return key, nil
+		return _key, nil
 	})
 
 	// 判断 是否为空 或者是否无效只要两边有一处是错误 就返回无效token
