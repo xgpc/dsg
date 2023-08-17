@@ -9,10 +9,10 @@ import (
 var Conf Config
 
 type Config struct {
-	TLS    string       `yaml:"tls"`
-	Etcd   etcd.Config  `yaml:"etcd"`
-	DBInfo mysql.DBInfo `yaml:"db_info"`
-	Redis  redis.Config `yaml:"redis"`
-	JwtKey string       `yaml:"jwt_key"`
-	AesKey string       `yaml:"aes_key"`
+	TLS    string       `mapstructure:"tls"`
+	Etcd   etcd.Config  `mapstructure:"etcd"`
+	DBInfo mysql.DBInfo `mapstructure:"db_info"`
+	Redis  redis.Config `mapstructure:"redis"`
+	JwtKey string       `mapstructure:"jwt_key"`
+	AesKey string       `mapstructure:"aes_key"`
 }
