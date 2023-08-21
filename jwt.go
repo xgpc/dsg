@@ -8,11 +8,11 @@ import (
 )
 
 // jwt
-var _jetKey string
+var _jetKey []byte
 
 func OptionJwt(JwtKey string) func() error {
 	return func() error {
-		_jetKey = JwtKey
+		_jetKey = []byte(JwtKey)
 		return nil
 	}
 }
