@@ -32,6 +32,7 @@ func MiddlewareJwt(ctx iris.Context) {
 		exce.ThrowSys(exce.CodeRequestError, "解析token失败"+err.Error())
 	}
 	p.SetMyId(parseToken.UserID)
+	p.ctx.Next()
 }
 
 // CreateToken 创建Token
