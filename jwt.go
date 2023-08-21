@@ -20,6 +20,7 @@ func OptionJwt(JwtKey string) func() error {
 // Login 中间件 login
 func Login(ctx iris.Context) {
 	MiddlewareJwt(ctx)
+	ctx.Next()
 }
 
 // MiddlewareJwt 中间件 login
