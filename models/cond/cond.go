@@ -3,7 +3,6 @@
 // @Description:   $
 // @File:          cond
 // @Data:          2022/4/129:54
-//
 package cond
 
 import (
@@ -134,5 +133,11 @@ func In(column string, params interface{}) func(db *gorm.DB) *gorm.DB {
 func NotIn(column string, params interface{}) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		return db.Where(column+" not in (?) ", params)
+	}
+}
+
+func DefinedOr(column1, column2 string, params1, params2 interface{}) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		return db.Where(column1+"= ? or "+column2+"= ?", params1, params2)
 	}
 }
