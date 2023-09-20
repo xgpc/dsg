@@ -136,12 +136,14 @@ func NotIn(column string, params interface{}) func(db *gorm.DB) *gorm.DB {
 	}
 }
 
+// DefinedOr 自定义gorm方法，or条件并列查询。(实现where条件下的查询 where ( A or B )方法。)
 func DefinedOr(column1, column2 string, params1, params2 interface{}) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		return db.Where(column1+"= ? or "+column2+"= ?", params1, params2)
 	}
 }
 
+// LikeOr 自定义gorm方法，or条件中并列LIKE查询。（实现where条件下的查询 where ( A like a or B like b)方法。 )
 func LikeOr(column1, column2, params1, params2 string) func(db *gorm.DB) *gorm.DB {
 	return func(db *gorm.DB) *gorm.DB {
 		return db.Where(column1+" LIKE (?) or "+column2+" LIKE (?)", "%"+params1+"%", "%"+params2+"%")
