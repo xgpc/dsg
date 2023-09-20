@@ -141,3 +141,9 @@ func DefinedOr(column1, column2 string, params1, params2 interface{}) func(db *g
 		return db.Where(column1+"= ? or "+column2+"= ?", params1, params2)
 	}
 }
+
+func LikeOr(column1, column2, params1, params2 string) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		return db.Where(column1+" LIKE (?) or "+column2+" LIKE (?)", "%"+params1+"%", "%"+params2+"%")
+	}
+}
