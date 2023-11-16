@@ -39,8 +39,12 @@ func CheckMobile(mobile string) bool {
 	return util.ValidatePhone(mobile)
 }
 
-func EnIDCard(idCard string) string {
+func MaskMiddlePartIDCard(idCard string) string {
 	return idCard[0:6] + "********" + idCard[14:]
+}
+
+func MaskFirstPartIDCard(idCard string) string {
+	return idCard[0:10] + "********"
 }
 
 func CheckIDCard(idCard string) bool {
