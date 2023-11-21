@@ -149,3 +149,10 @@ func LikeOr(column1, column2, params1, params2 string) func(db *gorm.DB) *gorm.D
 		return db.Where(column1+" LIKE (?) or "+column2+" LIKE (?)", "%"+params1+"%", "%"+params2+"%")
 	}
 }
+
+// Between 范围查询
+func Between(column string, args ...interface{}) func(db *gorm.DB) *gorm.DB {
+	return func(db *gorm.DB) *gorm.DB {
+		return db.Where(column+" BETWEEN ? AND ?", args)
+	}
+}
