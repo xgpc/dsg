@@ -2,18 +2,19 @@
 
 
 
-# recommend
-dsg is an open source toolkit based on iris, which is mainly used for rapid development and provides some common functions such as: logging, configuration, database, cache, g RPC, etc
+# 介绍
+dsg是基于iris的一个开源工具包，主要用于快速开发，提供了一些常用的功能，如：日志、配置、数据库、缓存、gRPC等
 
-# install
+# 安装
 ```shell
 go get -u github.com/xgpc/dsg/v2
 ```
 
-# use
+# 使用
+
 ```go
 
-//initialize
+// 初始化
 package main
 
 import (
@@ -23,21 +24,21 @@ import (
 
 func main() {
 
-    
-    // Read the configuration file
+    // 初始化
+    // 读取配置文件
     dsg.Load("config.yaml")
     dsg.Default(
-        dsg.OptionMysql(dsg.Conf.DBInfo), // start mysql
-        dsg.OptionRedis(dsg.Conf.Redis),  // start redis
-        dsg.OptionAes(dsg.Conf.AesKey),   // start aes
-        dsg.OptionJwt(dsg.Conf.JwtKey),   // start jwt
-        dsg.OptionEtcd(dsg.Conf.Etcd),    // start etcd
+        dsg.OptionMysql(dsg.Conf.DBInfo), // 启动mysql
+        dsg.OptionRedis(dsg.Conf.Redis),  // 启动redis
+        dsg.OptionAes(dsg.Conf.AesKey),   // 启动aes
+        dsg.OptionJwt(dsg.Conf.JwtKey),   // 启动jwt
+        dsg.OptionEtcd(dsg.Conf.Etcd),    // 启动etcd
     )
-    // Service code
+    // 业务代码
 
     api := iris.New()
     
-    // api Route loading
+    // api 路由加载
     
     
     if dsg.Conf.TLS != "" {
@@ -51,7 +52,7 @@ func main() {
 ```
 
 
-## use mysql
+## 使用mysql
 
 ```go
 package main
@@ -59,21 +60,22 @@ package main
 import "github.com/xgpc/dsg/v2"
 
 func main() {
-    // init
-    //Read configuration file
+    // 初始化
+    // 读取配置文件
     dsg.Load("config.yaml")
     dsg.Default(
-        dsg.OptionMysql(dsg.Conf.DBInfo), // use mysql
+        dsg.OptionMysql(dsg.Conf.DBInfo), // 启动mysql
     )
-    // Service code
-    // select
+    // 业务代码
+    // 获取mysql连接
+    // 查
     var user User
     err := dsg.DB().Model(user).First(&user, userID).Error
     if err != nil {
         panic(err)
     }
 
-    // install
+    // 增
     user := User{
         Name: "test",
     }
@@ -82,13 +84,13 @@ func main() {
         panic(err)
     }
 
-    // delete
+    // 删
     err := dsg.DB().Model(user).Delete(&user, userID).Error
     if err != nil {
         panic(err)
     }
 
-    // update
+    // 改
     err := dsg.DB().Model(user).Where("id", userID).Update(&user).Error
     if err != nil {
         panic(err)
@@ -107,7 +109,7 @@ func (User) TableName() string {
 ```
 
 
-## use redis
+## 使用redis
 
 ```go
 package main
