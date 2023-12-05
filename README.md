@@ -286,6 +286,23 @@ func (User) TableName() string {
 
 ```
 
+## Error handling
+```go
+// 报错
+// {
+//	"code" : exce.CodeSysBusy
+//	"msg" : "错误信息"
+// }
+exce.ThrowSys(exce.CodeSysBusy, "错误信息")
+
+// 中间件 使用
+// ExceptionLog 会捕获异常并返回
+api := iris.Default()
+api.Use(middleware.ExceptionLog)
+```
+
+
+
 >gRPC
  ```shell
 go install google.golang.org/protobuf/cmd/remote-gen-go@v1.26
