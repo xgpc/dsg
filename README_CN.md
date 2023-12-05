@@ -146,6 +146,70 @@ func main() {
 }
 ```
 
+
+# use AES and JWT
+
+```go
+package main
+
+import (
+    "fmt"
+    "github.com/kataras/iris/v12"
+    "time"
+    "github.com/xgpc/dsg/v2"
+)
+
+func main() {
+    // init
+    //Read configuration file
+    dsg.Load("config.yaml")
+    dsg.Default(
+        dsg.OptionAes(dsg.Conf.AesKey), // use aes
+        dsg.OptionJwt(dsg.Conf.JwtKey), // use jwt
+    )
+    // Service code
+    // aes
+    aesStr := dsg.AESEnCode("test")
+
+    deStr := dsg.AESDeCode(aesStr)
+    fmt.Println(deStr)
+
+    // jwt
+    var userID uint32 = 1
+    token := dsg.CreateToken(userID, time.Hour*24*7)
+    fmt.Println(token)
+
+    MapClaims := dsg.ParseToken(token)
+    fmt.Println(MapClaims)
+
+    if MapClaims.UserID == userID {
+        fmt.Println("success")
+    }
+    
+    // Use with iris
+    api := iris.New()
+    
+    
+    // api路由加载
+    // dsg。Login是一个验证令牌的中间件
+    // dsg。登录验证成功后，用户信息存储在上下文中
+    // dsg.NewBase(ctx)用于获取令牌中的用户ID
+    api.Get("/test", dsg.Login, func(ctx iris.Context) {
+        
+        p := dsg.NewBase(ctx)
+        if p.MyId() != UserID {
+            panic("error")
+        }
+        fmt.Println(userID)
+        
+        dsg.Success()
+    })
+    
+    // api.Run(iris.Addr(":8080")) ....
+}
+```
+
+
 >gRPC
  ```shell
 go install google.golang.org/protobuf/cmd/remote-gen-go@v1.26

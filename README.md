@@ -1,6 +1,4 @@
-
-
-
+# dsg
 
 # recommend
 dsg is an open source toolkit based on iris, which is mainly used for rapid development and provides some common functions such as: logging, configuration, database, cache, g RPC, etc
@@ -144,9 +142,74 @@ func main() {
 }
 ```
 
+# use AES and JWT
+
+```go
+package main
+
+import (
+    "fmt"
+    "github.com/kataras/iris/v12"
+    "time"
+    "github.com/xgpc/dsg/v2"
+)
+
+func main() {
+    // init
+    //Read configuration file
+    dsg.Load("config.yaml")
+    dsg.Default(
+        dsg.OptionAes(dsg.Conf.AesKey), // use aes
+        dsg.OptionJwt(dsg.Conf.JwtKey), // use jwt
+    )
+    // Service code
+    // aes
+    aesStr := dsg.AESEnCode("test")
+
+    deStr := dsg.AESDeCode(aesStr)
+    fmt.Println(deStr)
+
+    // jwt
+    var userID uint32 = 1
+    token := dsg.CreateToken(userID, time.Hour*24*7)
+    fmt.Println(token)
+
+    MapClaims := dsg.ParseToken(token)
+    fmt.Println(MapClaims)
+
+    if MapClaims.UserID == userID {
+        fmt.Println("success")
+    }
+    
+    // Use with iris
+    api := iris.New()
+    
+    
+    // api Route loading
+    // dsg.Login is a middleware that verifies the token
+    // dsg.Login After successful verification, the user information is stored in the context
+    // dsg.NewBase(ctx) is used to get the user ID in the token
+    api.Get("/test", dsg.Login, func(ctx iris.Context) {
+        
+        p := dsg.NewBase(ctx)
+        if p.MyId() != UserID {
+            panic("error")
+        }
+        fmt.Println(userID)
+    })
+    
+    // api.Run(iris.Addr(":8080")) ....
+}
+```
+
+
+
+
 >gRPC
  ```shell
 go install google.golang.org/protobuf/cmd/remote-gen-go@v1.26
 go install google.golang.org/grpc/cmd/remote-gen-go-grpc@v1.1
 
 ```
+
+You can find my updates on https://github.com/xgpc/dsg/blob/main/README.md
