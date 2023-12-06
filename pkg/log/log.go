@@ -34,15 +34,47 @@ var levelMap = map[levelType]zapcore.Level{
 	FATAL:  zapcore.FatalLevel,
 }
 
-func getLoggerLevel(level levelType) zapcore.Level {
-	if level, ok := levelMap[level]; ok {
-		return level
+// init 考虑如果用户没有显示调用Init则默认调用init 防止报错
+func init() {
+	filePath := "default.log"
+
+	level := getLoggerLevel(ERROR) //日志等级
+	hook := lumberjack.Logger{
+		Filename: filePath, // 日志文件路径
+		MaxSize:  30,       // 每个日志文件保存的最大尺寸 单位：M
+		//LocalTime: true,
+		MaxBackups: 100,  // 日志文件最多保存多少个备份
+		MaxAge:     30,   // 文件最多保存多少天
+		Compress:   true, // 是否压缩
 	}
-	return zapcore.InfoLevel
+	syncWriter := zapcore.AddSync(&hook)
+
+	// 判断日志等级
+	highPriority := zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
+		return lvl >= zapcore.ErrorLevel
+	})
+	lowPriority := zap.LevelEnablerFunc(func(lvl zapcore.Level) bool {
+		return lvl < zapcore.ErrorLevel
+	})
+	encoder := zap.NewProductionEncoderConfig()
+	encoder.EncodeTime = zapcore.ISO8601TimeEncoder
+
+	consoleDebugging := zapcore.Lock(os.Stdout)
+	consoleErrors := zapcore.Lock(os.Stderr)
+	consoleEncoder := zapcore.NewConsoleEncoder(zap.NewDevelopmentEncoderConfig())
+
+	core := zapcore.NewTee(
+		zapcore.NewCore(zapcore.NewJSONEncoder(encoder), syncWriter, zap.NewAtomicLevelAt(level)),
+		zapcore.NewCore(consoleEncoder, consoleErrors, highPriority),
+		zapcore.NewCore(consoleEncoder, consoleDebugging, lowPriority),
+	)
+
+	logger := zap.New(core, zap.AddCaller(), zap.AddCallerSkip(1))
+	errorLogger = logger.Sugar()
 }
 
 func Init(configLogLevel levelType, configFilePath string) {
-	filePath := "log.log"
+	filePath := "default.log"
 	// configFilePath 文件夹位置
 
 	if configFilePath != "" {
@@ -87,6 +119,13 @@ func Init(configLogLevel levelType, configFilePath string) {
 
 	logger := zap.New(core, zap.AddCaller(), zap.AddCallerSkip(1))
 	errorLogger = logger.Sugar()
+}
+
+func getLoggerLevel(level levelType) zapcore.Level {
+	if level, ok := levelMap[level]; ok {
+		return level
+	}
+	return zapcore.InfoLevel
 }
 
 func Debug(args ...interface{}) {
