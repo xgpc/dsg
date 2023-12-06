@@ -310,4 +310,5 @@ go install google.golang.org/grpc/cmd/remote-gen-go-grpc@v1.1
 
 ```
 
-You can find my updates on https://github.com/xgpc/dsg/blob/main/README.md
+![](https://resources.jetbrains.com/storage/products/company/brand/logos/jetbrains-training-partner.png?_gl=1*1lju73f*_ga*OTY5NjMzNTYxLjE2OTAyNTU1NjU.*_ga_9J976DJZ68*MTcwMTg1MjU1My4yMS4xLjE3MDE4NTI2MzYuNDAuMC4w&_ga=2.136564274.302593025.1701832936-969633561.1690255565)
+[Thank you jetbrains for your financial support of this project](www.jetbrains.com)
