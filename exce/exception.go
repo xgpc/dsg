@@ -24,11 +24,12 @@ const (
 	CodeSysBusy DsgError = 1001 + iota
 )
 
-//用户类
+// 用户类
 const (
 	CodeUserError DsgError = 2001 + iota
 	CodeUserNoLogin
 	CodeUserNoAuth
+	CodeUserTokenError // token错误
 )
 
 const (
