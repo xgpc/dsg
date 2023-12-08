@@ -29,7 +29,7 @@ func MiddlewareJwt(ctx iris.Context) {
 	token := ctx.GetHeader("token")
 	parseToken, err := jwt.ParseToken(_jetKey, token)
 	if err != nil {
-		exce.ThrowSys(exce.CodeRequestError, "解析token失败"+err.Error())
+		exce.ThrowSys(exce.CodeUserTokenError, "解析token失败"+err.Error())
 	}
 	p.SetMyId(parseToken.UserID)
 	p.ctx.Next()
