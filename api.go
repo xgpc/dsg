@@ -8,6 +8,7 @@ import (
 	"gorm.io/gorm"
 	"reflect"
 	"strconv"
+	"time"
 )
 
 //type ApiInterface interface {
@@ -113,6 +114,16 @@ func (p *Base) resp(data interface{}) {
 	return
 }
 
+// 时间
+
+func (p *Base) Now() time.Time {
+	return time.Now()
+}
+
+func (p *Base) NowUnix() int64 {
+	return time.Now().Unix()
+}
+
 // DB 默认
 func (p *Base) DB() *gorm.DB {
 	return _db
@@ -120,51 +131,3 @@ func (p *Base) DB() *gorm.DB {
 func (p *Base) Redis() *redis.Client {
 	return _redis
 }
-
-//// CryptSend 加密：后端--->前端
-//func (p *Base) CryptSend(data []byte) {
-//    AesKey, err := cryptService.GenKeyByte(16)
-//    if err != nil {
-//        exce.ThrowSys(err)
-//    }
-//    iv, err := cryptService.GenKeyByte(16)
-//    if err != nil {
-//        exce.ThrowSys(err)
-//    }
-//    encrypted, err := cryptService.AesEncrypt(data, AesKey, iv)
-//    if err != nil {
-//        exce.ThrowSys(err)
-//    }
-//    //对AES秘钥加密
-//    rsaEncrypt := cryptService.RSAEncrypt(AesKey, p.Key())
-//
-//    p.SuccessWithData(map[string]interface{}{
-//        "key":  rsaEncrypt,
-//        "tag":  iv,
-//        "data": encrypted,
-//    })
-//
-//}
-
-//// CryptReceive 加密：后端--->前端
-//func (p *Base) CryptReceive() []byte {
-//    var param struct {
-//        // RSA公钥加密AES后的密文
-//        Key []byte `validate:"required"`
-//        // AES偏移量
-//        IV []byte `validate:"required" json:"Tag"`
-//        // AES加密数据后的密文
-//        Data []byte `validate:"required"`
-//    }
-//    p.Init(&param)
-//
-//    //------>
-//    // 使用RSA私钥解出AES秘钥
-//    decryptAESKey := cryptService.RSADecrypt(param.Key, cryptService.RSAKey.Private)
-//    origin, err := cryptService.AesDecrypt(param.Data, decryptAESKey, param.IV)
-//    if err != nil {
-//        exce.ThrowSys(err)
-//    }
-//    //<----------
-//    return origin
-//}
