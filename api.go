@@ -85,11 +85,9 @@ func (p *Base) Success() {
 
 func (p *Base) SuccessWithData(data interface{}) {
 	var res = &ResJson{Code: CodeSuccess, Msg: "ok"}
-	if data == nil {
-		res.Data = resEmptySlice
-	} else {
-		res.Data = data
-	}
+
+	res.Data = data
+
 	p.resp(res)
 }
 
