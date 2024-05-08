@@ -79,8 +79,8 @@ func (p *Base) Key() (rsa []byte) {
 
 func (p *Base) Success() {
 	p.resp(map[string]interface{}{
-		"code": CodeSuccess,
-		"msg":  "ok",
+		"Code": CodeSuccess,
+		"Msg":  "ok",
 	})
 }
 
@@ -98,8 +98,8 @@ func (p *Base) SuccessWithList(list interface{}, total interface{}) {
 	}
 	var res = &ResJson{
 		CodeSuccess, "查询成功", iris.Map{
-			"total": total,
-			"list":  list,
+			"Total": total,
+			"List":  list,
 		},
 	}
 	p.resp(res)

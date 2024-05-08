@@ -16,9 +16,9 @@ var (
 )
 
 type ResJson struct {
-	Code int         `json:"code"`
-	Msg  string      `json:"msg"`
-	Data interface{} `json:"data"`
+	Code int
+	Msg  string
+	Data interface{}
 }
 
 func init() {
