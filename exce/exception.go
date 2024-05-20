@@ -32,7 +32,7 @@ const (
 
 // 用户类
 const (
-	CodeUserError = 2001 + iota
+	CodeUserError DsgError = 2001 + iota
 	CodeUserNoLogin
 	CodeUserNoAuth
 	CodeUserTokenError
