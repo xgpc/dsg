@@ -93,6 +93,11 @@ func (p *Base) SuccessWithData(data interface{}) {
 }
 
 func (p *Base) SuccessWithList(list interface{}, total interface{}) {
+
+	if list == nil {
+		list = resEmptySlice
+	}
+
 	if reflect.TypeOf(list).Kind() == reflect.Slice && reflect.ValueOf(list).Len() < 1 {
 		list = resEmptySlice
 	}
