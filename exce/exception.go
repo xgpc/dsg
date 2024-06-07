@@ -130,10 +130,9 @@ func ThrowSys(err error, args ...interface{}) {
 	case 0:
 		e.Code = temp.Code()
 		e.Msg = temp.Error()
-	case 1:
-		msg := args[0]
+	default:
 		e.Code = temp.Code()
-		e.Msg = reflect.ValueOf(msg).String()
+		e.Msg = fmt.Sprint(args)
 	}
 	panic(e)
 }
