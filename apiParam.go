@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"github.com/xgpc/dsg/v2/exce"
 	"github.com/xgpc/dsg/v2/pkg/validator"
+	"net/http"
 	"reflect"
 )
 
@@ -28,7 +29,7 @@ func (p *Base) Init(data interface{}) {
 
 	// 请求参数
 	switch p.ctx.Method() {
-	case "GET":
+	case http.MethodGet, http.MethodDelete:
 		p.initParamGet(data)
 	default:
 		p.initParamPost(data)
