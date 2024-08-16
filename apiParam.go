@@ -37,6 +37,41 @@ func (p *Base) Init(data interface{}) {
 	p.ValidateParam(data)
 }
 
+func (p *Base) CheckBody(data interface{}) map[string]interface{} {
+	ReqByte, err := p.Ctx().GetBody()
+	if err != nil {
+		exce.ThrowSys(exce.CodeRequestError, err.Error())
+	}
+
+	if err := json.Unmarshal(ReqByte, &data); err != nil {
+		exce.ThrowSys(exce.CodeRequestError, err.Error())
+	}
+
+	var mdData map[string]interface{}
+	if err := json.Unmarshal(ReqByte, &mdData); err != nil {
+		exce.ThrowSys(exce.CodeRequestError, err.Error())
+	}
+
+	// 把data转为json, 然后再转为map[string], 如果mdData中的key不在data中, 则删除
+	marshal, err := json.Marshal(data)
+	if err != nil {
+		exce.ThrowSys(exce.CodeRequestError, err.Error())
+	}
+	var tmp map[string]interface{}
+	err = json.Unmarshal(marshal, &tmp)
+	if err != nil {
+		exce.ThrowSys(exce.CodeRequestError, err.Error())
+	}
+	for k := range mdData {
+		if _, ok := tmp[k]; !ok {
+			delete(mdData, k)
+		}
+	}
+
+	p.ValidateParam(data)
+	return mdData
+}
+
 // ValidateParam 参数校验
 func (p *Base) ValidateParam(data interface{}) {
 	// 加载验证参数
