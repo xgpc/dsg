@@ -3,6 +3,7 @@ package etcd
 import (
 	"context"
 	"fmt"
+	"github.com/xgpc/dsg/v2/pkg/util"
 	clientv3 "go.etcd.io/etcd/client/v3"
 	"strconv"
 	"strings"
@@ -104,9 +105,9 @@ func (p *Handler) RegisterServiceDefault() error {
 
 // RegisterService 注册服务
 func (p *Handler) RegisterService(name string, address string, port int) error {
-	key := fmt.Sprintf("%s/%s/%d", name, address, port)
+	key := fmt.Sprintf("/service/%s/%s:%d", name, address, port)
 
-	value := ""
+	value := util.RandomNumber(10)
 
 	// 创建租约
 	lease, err := p.Client.Grant(context.Background(), int64(p.Conf.DefLeaseSecond))
