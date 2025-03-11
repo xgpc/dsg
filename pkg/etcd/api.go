@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"github.com/xgpc/dsg/v2/pkg/util"
 	clientv3 "go.etcd.io/etcd/client/v3"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -41,17 +40,16 @@ func (p *Handler) Put(key, value string, opts ...clientv3.OpOption) (*clientv3.P
 type Service struct {
 	Name    string
 	Address string
-	Port    int
 }
 
 func (s *Service) GetUrl() string {
-	url := "http://" + s.Address + ":" + strconv.Itoa(s.Port)
+	url := "http://" + s.Address
 	return url
 }
 
 // DiscoverServices 发现服务
 func (p *Handler) DiscoverServices(name string) ([]Service, error) {
-	key := name
+	key := "/service/" + name
 
 	resp, err := p.Client.Get(context.Background(), key, clientv3.WithPrefix())
 	if err != nil {
@@ -59,7 +57,7 @@ func (p *Handler) DiscoverServices(name string) ([]Service, error) {
 	}
 	var list []Service
 	for _, kv := range resp.Kvs {
-		serverName, address, port, err := parseServiceKey(string(kv.Key))
+		serverName, address, err := parseServiceKey(string(kv.Key))
 		if err != nil {
 			fmt.Println(err)
 			continue
@@ -67,7 +65,6 @@ func (p *Handler) DiscoverServices(name string) ([]Service, error) {
 		node := Service{
 			Name:    serverName,
 			Address: address,
-			Port:    port,
 		}
 
 		list = append(list, node)
@@ -77,25 +74,19 @@ func (p *Handler) DiscoverServices(name string) ([]Service, error) {
 }
 
 // 解析key
-func parseServiceKey(key string) (string, string, int, error) {
+func parseServiceKey(key string) (string, string, error) {
 	var name, address string
-	var port int
 
 	list := strings.Split(key, "/")
 
 	if len(list) != 3 {
-		return "", "", 0, fmt.Errorf("%s 服务器解析失败", key)
+		return "", "", fmt.Errorf("%s 服务器解析失败", key)
 	}
 
-	name = list[0]
-	address = list[1]
+	name = list[1]
+	address = list[2]
 
-	port, err := strconv.Atoi(list[2])
-	if err != nil {
-		return "", "", 0, fmt.Errorf("strconv.Atoi(%s)", list[2])
-	}
-
-	return name, address, port, nil
+	return name, address, nil
 }
 
 // RegisterServiceDefault  注册服务默认配置
