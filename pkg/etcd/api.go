@@ -79,12 +79,12 @@ func parseServiceKey(key string) (string, string, error) {
 
 	list := strings.Split(key, "/")
 
-	if len(list) != 3 {
+	if len(list) != 4 {
 		return "", "", fmt.Errorf("%s 服务器解析失败", key)
 	}
 
-	name = list[1]
-	address = list[2]
+	name = list[2]
+	address = list[3]
 
 	return name, address, nil
 }
