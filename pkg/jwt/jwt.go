@@ -36,7 +36,7 @@ func (m MapClaims) Validate() error {
 }
 
 // MakeToken 创建token
-func MakeToken(key []byte, userID uint32, ExpiresNum int64) (string, error) {
+func MakeToken(key []byte, userID uint32, subject string, ExpiresNum int64) (string, error) {
 	claims := MapClaims{
 		UserID: userID,
 		RegisteredClaims: goJwt.RegisteredClaims{
@@ -47,7 +47,7 @@ func MakeToken(key []byte, userID uint32, ExpiresNum int64) (string, error) {
 			ExpiresAt: goJwt.NewNumericDate(time.Unix(ExpiresNum, 0)),
 			//nbf: 生效时间
 			//iat: 签发时间
-			//jti: 唯一身份标识
+			Subject: subject,
 		},
 	}
 	token := goJwt.NewWithClaims(goJwt.SigningMethodHS256, claims)

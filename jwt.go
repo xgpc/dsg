@@ -36,9 +36,9 @@ func MiddlewareJwt(ctx iris.Context) {
 }
 
 // CreateToken 创建Token
-func CreateToken(UserID uint32, ExpiresAt time.Duration) string {
+func CreateToken(UserID uint32, subject string, ExpiresAt time.Duration) string {
 	ExpiresNum := time.Now().Add(ExpiresAt).Unix()
-	token, err := jwt.MakeToken(_jetKey, UserID, ExpiresNum)
+	token, err := jwt.MakeToken(_jetKey, UserID, subject, ExpiresNum)
 	if err != nil {
 		exce.ThrowSys(exce.CodeSysBusy, "创建token失败,"+err.Error())
 	}

@@ -11,7 +11,7 @@ func TestCreateJwt(t *testing.T) {
 		panic(err)
 	}
 
-	toekn := CreateToken(1, time.Hour*24)
+	toekn := CreateToken(1, "phone", time.Hour*24)
 
 	res := ParseToken(toekn)
 	if res == nil {
